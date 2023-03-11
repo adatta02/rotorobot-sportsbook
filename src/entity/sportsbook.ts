@@ -1,5 +1,5 @@
 import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import {ContestOdds} from "./contestOdds";
+import {ContestBetOdds} from "./contestBetOdds";
 
 @Entity()
 export class Sportsbook {
@@ -15,6 +15,6 @@ export class Sportsbook {
   @Column({ nullable: false })
   name: string;
 
-  @OneToMany(() => ContestOdds, (odds) => odds.sportsbook)
-  contestOdds!: ContestOdds[];
+  @OneToMany(() => ContestBetOdds, (odds) => odds.sportsbook)
+  contestOdds!: ContestBetOdds[];
 }

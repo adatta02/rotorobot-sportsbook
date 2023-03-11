@@ -1,9 +1,10 @@
 import {CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Sportsbook} from "./sportsbook";
 import {Contest} from "./contest";
+import {ContestBet} from "./contestBet";
 
 @Entity()
-export class ContestOdds {
+export class ContestBetOdds {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -15,8 +16,8 @@ export class ContestOdds {
   })
   sportsbook: Sportsbook;
 
-  @ManyToOne(() => Contest, (contest) => contest.contestOdds, {
+  @ManyToOne(() => ContestBet, (contestBet) => contestBet.contestOdds, {
     onDelete: 'CASCADE',
   })
-  contest: Contest;
+  contestBet: ContestBet;
 }
