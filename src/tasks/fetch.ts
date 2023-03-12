@@ -39,8 +39,13 @@ export async function fetchMGMCollegeBasketball() {
       await datasource.manager.save(contestBet);
       let odds = await datasource
                               .getRepository(ContestBetOdds)
-                              .findOneBy({contestBet: {id: contestBet.id}, sportsbook: {id: sportsbook.id}, odds: bet.odds});
+                              .createQueryBuilder('u')
+                              .where('u.contestBet.id = :contestBetId AND u.sportsbook.id = :sportsbookId AND u.odds = :odds')
+                              .setParameters({contestBetId: contestBet.id, sportsbookId: sportsbook.id, odds: bet.odds})
+                              .getOne();
+
       if(!odds) {
+
         await datasource.createQueryBuilder()
           .update(ContestBetOdds)
           .set({isLatest: false})
