@@ -44,6 +44,7 @@ async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): 
   const key = `${bet.type}-${bet.title}`;
   let contestBet = await datasource.getRepository(ContestBet).findOneBy({key: key, contest: {id: contest.id}});
   if(!contestBet) {
+    log(`Could not find bet: ${key}`);
     contestBet = new ContestBet();
     contestBet.contest = contest;
     contestBet.key = key;
@@ -96,7 +97,7 @@ export async function fetchWynn() {
 
   for(const s of wynn.getActivatedSports()) {
     const matches = await wynn.getMatches(s.sportId);
-    log(`fetchMGM: found ${matches.length} games`);
+    log(`fetchWynn: found ${matches.length} games`);
 
     for(const match of matches) {
       if(match.bets.length === 0) {

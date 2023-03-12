@@ -5,7 +5,7 @@ import {
   IBwinBettingOffer,
   IBwinClientConfig,
   IBwinCompetitionLobby,
-  IBwinCompetitionLobbyWidgetFixtureDetail
+  IBwinCompetitionLobbyWidgetFixtureDetail, IBwinFixturesResponse
 } from "./types";
 import {ISport} from "../types";
 import {ContestDto} from "../../dto/contestDto";
@@ -24,8 +24,7 @@ export class BetMGM {
   private _clientConfig: IBwinClientConfig;
 
   private sportCompetitionList = [
-    {label: 'College Basketball', sportId: '7', competitionId: '264'},
-    {label: 'NBA', sportId: '7', competitionId: '6004'},
+    {label: 'Basketball', sportId: '7', competitionId: '264'},
     /*{label: 'NHL', sportId: '12', competitionId: '34'},
     {label: 'PGA', sportId: '13', competitionId: '375'},
     {label: 'WBC', sportId: '23', competitionId: '7405'},
@@ -43,55 +42,21 @@ export class BetMGM {
   }
 
   private async geCompetitionGames(sportId: string, competitionId: string): Promise<ContestDto[]> {
-    log(`geCompetitionGames: ${sportId}`);
+    const clientConfig = await this.getClientConfig();
+    const url = `https://sports.ma.betmgm.com/cds-api/bettingoffer/fixtures?x-bwin-accessid=${clientConfig.msApp.publicAccessId}`
+              + `&lang=en-us&country=US&userCountry=US&subdivision=US-Massachusetts&fixtureTypes=Standard&state=Latest&offerMapping=Filtered`
+              + `&offerCategories=Gridable&fixtureCategories=Gridable,NonGridable,Other&sportIds=${sportId}&regionIds=9&competitionIds=${competitionId}`
+              + `&conferenceIds=&isPriceBoost=false&skip=0&take=50&sortBy=Tags`;
 
     try {
-      const url = `https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=${sportId}&regionId=9&competitionId=${competitionId}&compoundCompetitionId=1:${competitionId}&forceFresh=1`;
-      const result = await axios.get<IBwinCompetitionLobby>(url, {headers: {
+      const result = await axios.get<IBwinFixturesResponse>(url, {
+        headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
-      }});
-
-      const payload = [{
-        "layoutSize": "Large",
-        "page": "CompetitionLobby",
-        "sportId": 7,
-        "regionId": 9,
-        "competitionId": 264,
-        "compoundCompetitionId": "1:264",
-        "widgetId": "/mobilesports-v1.0/layout/layout_us/modules/competition/prematchevents"
-      }];
-      const urlBatch = `https://sports.ma.betmgm.com/en/sports/api/widget/batch?layoutSize=Large&page=CompetitionLobby&sportId=${sportId}&regionId=9&competitionId=${competitionId}&compoundCompetitionId=1:264&forceFresh=1`;
-      const resultBatch = await axios.post<IBwinBatchLobby>(urlBatch, payload, {headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-          'content-type': 'application/json',
-          'origin': 'https://sports.ma.betmgm.com',
-          'pragma': 'no-cache',
-          'referer': 'https://sports.ma.betmgm.com/en/sports/basketball-7/betting/usa-9/ncaa-264',
-          'sports-api-version': 'SportsAPIv1',
-
-      }});
-
-      const gamesToProcess: IBwinCompetitionLobbyWidgetFixtureDetail[] = [];
-      for (const widget of result.data.widgets) {
-        if (!widget.payload || !widget.payload.fixtures) {
-          continue;
         }
-
-        for (const item of widget.payload.fixtures) {
-          if(item.fixture) {
-            gamesToProcess.push(item.fixture);
-          }
-        }
-      }
-
-      for(const item of resultBatch.data.widgets) {
-        for(const fixture of item.payload.fixtures) {
-          gamesToProcess.push(fixture);
-        }
-      }
+      });
 
       const contests: ContestDto[] = [];
-      for(const item of gamesToProcess) {
+      for(const item of result.data.fixtures) {
         const bets: ContestBetDto[] = [];
         for(const game of item.games) {
           for(const gameBet of game.results) {

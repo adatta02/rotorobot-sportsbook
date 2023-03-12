@@ -39,6 +39,10 @@ export interface IBwinBatchLobby {
   }[]
 }
 
+export interface IBwinFixturesResponse {
+  fixtures: IBwinCompetitionLobbyWidgetFixtureDetail[];
+}
+
 export interface IBwinCompetitionLobby {
   widgets: IBwinCompetitionLobbyWidget[];
 }
