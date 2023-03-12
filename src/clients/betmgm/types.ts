@@ -114,7 +114,7 @@ export interface IBwinCompetitionLobbyWidgetFixtureDetailGame {
 export interface IBwinCompetitionLobbyWidgetFixtureDetailGameResult {
   id: number,
   odds: number,
-  name: {value: 'Money Line' | 'Totals' | 'Spread', sign: string},
+  name: {value: string, sign: string},
   sourceName: {value: string, sign: string},
   visibility: 'Visible',
   numerator: number,

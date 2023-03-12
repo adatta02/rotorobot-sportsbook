@@ -4,6 +4,7 @@ import {ISport} from "../types";
 import {IWynnCategoryResponse, IWynnSportsOdds, IWynnSportsResponseEntry} from "./types";
 import {ContestDto} from "../../dto/contestDto";
 import {ContestBetDto} from "../../dto/contestBet.dto";
+import {log} from "../../utils/logger";
 
 const BET_TYPE_MAP = {
   'Handicap (2 Way)': 'Spread',
@@ -43,6 +44,15 @@ export class Wynn {
     {label: 'Darts', sportId: '4'},
     {label: 'MMA', sportId: '67'},*/
   ];
+
+  public async getAllGames(): Promise<ContestDto[]> {
+    let games: ContestDto[] = [];
+    for(const s of this.getActivatedSports()) {
+      const matches = await this.getMatches(s.sportId);
+      games = games.concat(matches);
+    }
+    return games;
+  }
 
   public getActivatedSports() {
     return this.sportCompetitionList;
@@ -91,7 +101,7 @@ export class Wynn {
               if (game.raw_line > 0) {
                 lineStr = `+${game.raw_line}`;
               } else {
-                lineStr = `-${game.raw_line}`;
+                lineStr = `${game.raw_line}`;
               }
 
               const inverseLine = -1 * game.raw_line;
@@ -99,12 +109,12 @@ export class Wynn {
               if (inverseLine > 0) {
                 inverseLineStr = `+${inverseLine}`;
               } else {
-                inverseLineStr = `-${inverseLine}`;
+                inverseLineStr = `${inverseLine}`;
               }
 
               bets.push({
                 type: BET_TYPE_MAP[game.name],
-                title: `${awayTeamName} ${inverseLine}`,
+                title: `${awayTeamName} ${inverseLineStr}`,
                 odds: oddsResult.data[game.outcomes[0].id].value
               });
 

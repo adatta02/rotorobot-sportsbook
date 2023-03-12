@@ -9,6 +9,7 @@ import {Wynn} from "../clients/wynn";
 import * as moment from 'moment';
 import {ContestDto} from "../dto/contestDto";
 import {ContestBetDto} from "../dto/contestBet.dto";
+import * as fs from 'fs';
 
 async function contestDTOToContest(item: ContestDto): Promise<Contest> {
   const datasource = getDatasource();
@@ -94,24 +95,22 @@ export async function fetchWynn() {
   const wynn = new Wynn();
 
   let newOdds = 0;
+  const matches = await wynn.getAllGames();
 
-  for(const s of wynn.getActivatedSports()) {
-    const matches = await wynn.getMatches(s.sportId);
-    log(`fetchWynn: found ${matches.length} games`);
+  fs.writeFileSync('/tmp/fetchWynn.json', JSON.stringify(matches, null, 4));
 
-    for(const match of matches) {
-      if(match.bets.length === 0) {
-        log(`No bets for: ${match.title}`);
-        continue;
-      }
+  for(const match of matches) {
+    if(match.bets.length === 0) {
+      log(`No bets for: ${match.title}`);
+      continue;
+    }
 
-      const contest = await contestDTOToContest(match);
-      for(const bet of match.bets) {
-        const contestBet = await contestDTOBetToContestBet(contest, bet);
-        const odds = await contestDTOBetOddsToContestBetOdds(sportsbook, contestBet, bet);
-        if(odds.isNew) {
-          newOdds += 1;
-        }
+    const contest = await contestDTOToContest(match);
+    for(const bet of match.bets) {
+      const contestBet = await contestDTOBetToContestBet(contest, bet);
+      const odds = await contestDTOBetOddsToContestBetOdds(sportsbook, contestBet, bet);
+      if(odds.isNew) {
+        newOdds += 1;
       }
     }
   }
@@ -126,6 +125,8 @@ export async function fetchMGM() {
   let newOdds = 0;
 
   const results = await betMgm.getAllGames();
+
+  fs.writeFileSync('/tmp/fetchMGM.json', JSON.stringify(results, null, 4));
 
   log(`fetchMGM: found ${results.length} games`);
 

@@ -45,7 +45,7 @@ export class BetMGM {
     const clientConfig = await this.getClientConfig();
     const url = `https://sports.ma.betmgm.com/cds-api/bettingoffer/fixtures?x-bwin-accessid=${clientConfig.msApp.publicAccessId}`
               + `&lang=en-us&country=US&userCountry=US&subdivision=US-Massachusetts&fixtureTypes=Standard&state=Latest&offerMapping=Filtered`
-              + `&offerCategories=Gridable&fixtureCategories=Gridable,NonGridable,Other&sportIds=${sportId}&regionIds=9&competitionIds=${competitionId}`
+              + `&offerCategories=Gridable&fixtureCategories=Gridable,NonGridable,Other&sportIds=${sportId}&regionIds=9`
               + `&conferenceIds=&isPriceBoost=false&skip=0&take=50&sortBy=Tags`;
 
     try {
@@ -60,9 +60,19 @@ export class BetMGM {
         const bets: ContestBetDto[] = [];
         for(const game of item.games) {
           for(const gameBet of game.results) {
+            let title = gameBet.name.value;
+            if(game.name.value === 'Money Line') {
+              if(item.participants[0].name.value.includes(gameBet.name.value)
+                || gameBet.name.value.includes(item.participants[0].name.value)) {
+                title = item.participants[0].name.value;
+              }else{
+                title = item.participants[1].name.value;
+              }
+            }
+
             bets.push({
               type: game.name.value,
-              title: gameBet.name.value,
+              title: title,
               odds: gameBet.odds
             });
           }
