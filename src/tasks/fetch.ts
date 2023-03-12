@@ -11,7 +11,10 @@ export async function fetchWynn() {
   const wynn = new Wynn();
   const sports = await wynn.getSports();
 
-  console.log(sports);
+  for(const s of sports) {
+    const matches = await wynn.getMatches(s.id);
+    console.log(matches);
+  }
 }
 
 export async function fetchMGM() {

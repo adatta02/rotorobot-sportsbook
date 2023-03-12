@@ -1,15 +1,131 @@
 import axios from 'axios';
 import * as moment from 'moment';
 import {ISport} from "../types";
-import {IWynnCategoryResponse} from "./types";
+import {IWynnCategoryResponse, IWynnSportsOdds, IWynnSportsResponseEntry} from "./types";
+import {ContestDto} from "../../dto/contestDto";
+import {ContestBetDto} from "../../dto/contestBet.dto";
+
+const BET_TYPE_MAP = {
+  'Handicap (2 Way)': 'Spread',
+  'Money Line': 'Money Line',
+  'Total Points Over/Under': 'Totals',
+};
 
 // Looks like this is built on https://www.whitehatgaming.com/
 export class Wynn {
 
   public static readonly NAME = "Wynn";
 
-  public async getMatches(categoryId: string) {
+  public async getMatches(categoryId: string): Promise<ContestDto[]> {
     const url = `https://fo.wynnbet-ma-web.gansportsbook.com/s/sbgate/sports/fo-category/?categoryId=${categoryId}&country=US&isMobile=0&language=us&layout=AMERICAN&limit=6&province`;
+    try {
+      const result = await axios.get<IWynnSportsResponseEntry[]>(url, {headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
+        }});
+
+      const marketIds: number[][] = [];
+      for(const item of result.data) {
+        for(const itemMatches of item.matches) {
+          const ids = itemMatches.markets.map(f => f.id);
+          marketIds.push(ids);
+        }
+      }
+
+      const oddsUrl = `https://fo.wynnbet-ma-web.gansportsbook.com/s/sb-odds/odds/current/fo-line/`;
+      const oddsResult = await axios.post<Record<string, IWynnSportsOdds>>(oddsUrl, {marketIds, drawOutcomes: {}}, {headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
+      }});
+
+      const contests: ContestDto[] = [];
+      for(const item of result.data) {
+
+        for(const itemMatches of item.matches) {
+
+          // TODO: Normalize these team names
+          const awayTeamName = itemMatches.away_team_short_name;
+          const homeTeamName = itemMatches.home_team_short_name;
+
+          const bets: ContestBetDto[] = [];
+
+          for (const game of itemMatches.markets) {
+            if (game.status !== 'OPEN' || !game.outcomes || game.outcomes.length < 2) {
+              continue;
+            }
+
+            let odds = -1;
+
+            if (game.name === 'Handicap (2 Way)') {
+              let lineStr = '';
+              if (game.raw_line > 0) {
+                lineStr = `+${game.raw_line}`;
+              } else {
+                lineStr = `-${game.raw_line}`;
+              }
+
+              const inverseLine = -1 * game.raw_line;
+              let inverseLineStr = '';
+              if (inverseLine > 0) {
+                inverseLineStr = `+${inverseLine}`;
+              } else {
+                inverseLineStr = `-${inverseLine}`;
+              }
+
+              bets.push({
+                type: BET_TYPE_MAP[game.name],
+                title: `${awayTeamName} ${inverseLine}`,
+                odds: oddsResult.data[game.outcomes[0].id].value
+              });
+
+              bets.push({
+                type: BET_TYPE_MAP[game.name],
+                title: `${homeTeamName} ${lineStr}`,
+                odds: oddsResult.data[game.outcomes[1].id].value
+              });
+
+            } else if (game.name === 'Money Line') {
+              bets.push({
+                type: BET_TYPE_MAP[game.name],
+                title: `${awayTeamName}`,
+                odds: oddsResult.data[game.outcomes[0].id].value
+              });
+
+              bets.push({
+                type: BET_TYPE_MAP[game.name],
+                title: `${homeTeamName}`,
+                odds: oddsResult.data[game.outcomes[1].id].value
+              });
+            } else if (game.name === 'Total Points Over/Under') {
+              bets.push({
+                type: BET_TYPE_MAP[game.name],
+                title: `Over ${game.line}`,
+                odds: oddsResult.data[game.outcomes[0].id].value
+              });
+
+              bets.push({
+                type: BET_TYPE_MAP[game.name],
+                title: `Under ${game.line}`,
+                odds: oddsResult.data[game.outcomes[1].id].value
+              });
+            }
+          }
+
+
+          contests.push({
+            id: `${itemMatches.id}`,
+            title: itemMatches.name,
+            contestantOne: homeTeamName,
+            contestantTwo: awayTeamName,
+            startTime: moment(itemMatches.match_start).toDate(),
+            isLive: itemMatches.inplay,
+            bets: bets
+          });
+        }
+      }
+      return contests;
+    }catch(e) {
+      console.error(e);
+      process.exit(-1);
+    }
 
   }
 

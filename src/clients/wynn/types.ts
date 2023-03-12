@@ -68,8 +68,8 @@ export interface IWynnSportsResponseContest {
   sport_position: number;
   position_score: number;
   locale: string;
-  excluded_countries?: (null)[] | null;
-  markets:
+  excluded_countries?: unknown[];
+  markets: IWynnSportsResponseBet[];
 }
 
 export interface IWynnSportsSequence {
@@ -87,8 +87,8 @@ export interface IWynnSportsOutcomesEntity {
 export interface IWynnSportsResponseBet {
   id: number;
   sequence: IWynnSportsSequence;
-  name: string;
-  status: string;
+  name: 'Handicap (2 Way)' | 'Money Line' | 'Total Points Over/Under';
+  status: 'SUSPENDED' | 'OPEN';
   line: string;
   view_type: string;
   market_type_id: number;
@@ -97,4 +97,13 @@ export interface IWynnSportsResponseBet {
   provider: number;
   outcomes?: IWynnSportsOutcomesEntity[];
   raw_line: number;
+}
+
+export interface IWynnSportsOdds {
+  outcome_id: number;
+  odds_id: string;
+  status: string;
+  market_id: number;
+  value: number;
+  match_id: number;
 }
