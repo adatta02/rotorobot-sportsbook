@@ -11,7 +11,7 @@ export class ContestBetOdds {
   @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
 
-  @Column({ nullable: false, type: "decimal", precision: 4, scale: 2 })
+  @Column({ nullable: false, type: "decimal", precision: 6, scale: 2 })
   odds: number;
 
   @Column({ nullable: false })
