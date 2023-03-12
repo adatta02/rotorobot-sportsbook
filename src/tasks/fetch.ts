@@ -10,6 +10,7 @@ export async function fetchMGMCollegeBasketball() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
   const datasource = getDatasource();
   const betMgm = new BetMGM();
+  let newOdds = 0;
 
   const results = await betMgm.getCollegeBasketballGames();
 
@@ -63,7 +64,11 @@ export async function fetchMGMCollegeBasketball() {
         odds.odds = bet.odds;
         odds.isLatest = true;
         await datasource.manager.save(odds);
+
+        newOdds += 1;
       }
     }
   }
+
+  log(`Found ${newOdds} new lines!`);
 }
