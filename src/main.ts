@@ -15,4 +15,5 @@ dotenv.config();
   console.log('BetMGM done!');
   console.log('Sleeping for 300 sec');
   await new Promise(resolve => setTimeout(resolve, 300 * 1000));
+  process.exit(0);
 })();

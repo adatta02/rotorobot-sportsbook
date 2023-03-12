@@ -13,7 +13,7 @@ export async function fetchMGMCollegeBasketball() {
   const results = await betMgm.getCollegeBasketballGames();
 
   console.log(`fetchMGMCollegeBasketball: found ${results.length} games`);
-  
+
   for(const item of results) {
     const key = `${item.title}-${item.startTime.toJSON()}`;
     let contest = await datasource.getRepository(Contest).findOneBy({key});
