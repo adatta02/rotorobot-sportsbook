@@ -13,12 +13,20 @@ import {ContestBetDto} from "../dto/contestBet.dto";
 async function contestDTOToContest(item: ContestDto): Promise<Contest> {
   const datasource = getDatasource();
   const startTime = moment(item.startTime).format('Y-MM-DD');
-  const key = `${item.title}-${startTime}`;
+  const keys = [
+    `${item.contestantOne} | ${item.contestantTwo} | ${startTime}`,
+    `${item.contestantTwo} | ${item.contestantOne} | ${startTime}`,
+  ]
 
-  let contest = await datasource.getRepository(Contest).findOneBy({key});
+  let contest = await datasource.getRepository(Contest)
+                                .createQueryBuilder('u').where('u.key IN (:keys)')
+                                .setParameters({keys})
+                                .getOne()
   if(!contest) {
+    log(`Could not find contest: ${keys[0]}`);
+
     contest = new Contest();
-    contest.key = key;
+    contest.key = keys[0];
     contest.title = item.title;
     contest.contestantOne = item.contestantOne;
     contest.contestantTwo = item.contestantTwo;

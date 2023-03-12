@@ -26,11 +26,11 @@ export class BetMGM {
   private sportCompetitionList = [
     {label: 'College Basketball', sportId: '7', competitionId: '264'},
     {label: 'NBA', sportId: '7', competitionId: '6004'},
-    {label: 'NHL', sportId: '12', competitionId: '34'},
+    /*{label: 'NHL', sportId: '12', competitionId: '34'},
     {label: 'PGA', sportId: '13', competitionId: '375'},
     {label: 'WBC', sportId: '23', competitionId: '7405'},
     {label: 'Darts', sportId: '34', competitionId: ''},
-    {label: 'MMA', sportId: '45', competitionId: ''},
+    {label: 'MMA', sportId: '45', competitionId: ''},*/
   ];
 
   public async getAllGames(): Promise<ContestDto[]> {
@@ -78,7 +78,9 @@ export class BetMGM {
         }
 
         for (const item of widget.payload.fixtures) {
-          gamesToProcess.push(item.fixture);
+          if(item.fixture) {
+            gamesToProcess.push(item.fixture);
+          }
         }
       }
 

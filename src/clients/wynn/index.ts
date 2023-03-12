@@ -38,10 +38,10 @@ export class Wynn {
 
   private sportCompetitionList = [
     {label: 'Basketball', sportId: '45'},
-    {label: 'NHL', sportId: '61'},
+    /*{label: 'NHL', sportId: '61'},
     {label: 'PGA', sportId: '3'},
     {label: 'Darts', sportId: '4'},
-    {label: 'MMA', sportId: '67'},
+    {label: 'MMA', sportId: '67'},*/
   ];
 
   public getActivatedSports() {
@@ -74,8 +74,8 @@ export class Wynn {
         for(const itemMatches of item.matches) {
 
           // TODO: Normalize these team names
-          const awayTeamName = itemMatches.away_team_short_name;
-          const homeTeamName = itemMatches.home_team_short_name;
+          const awayTeamName = itemMatches.away_team_name;
+          const homeTeamName = itemMatches.home_team_name;
 
           const bets: ContestBetDto[] = [];
 
