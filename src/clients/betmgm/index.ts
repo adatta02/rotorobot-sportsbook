@@ -15,6 +15,8 @@ import {log} from "../../utils/logger";
 
 const BASE_URL = 'https://sports.ma.betmgm.com';
 
+// TODO: Figure out how to dynamically get the list of sports and competitionIds
+// TODO: Soccer is pulling from a different API endpoint so not loading right now
 export class BetMGM {
 
   public static readonly NAME = 'BetMGM';

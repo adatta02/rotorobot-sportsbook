@@ -5,6 +5,14 @@ import {ContestBet} from "../entity/contestBet";
 import {ContestBetOdds} from "../entity/contestBetOdds";
 import {Sportsbook} from "../entity/sportsbook";
 import {log} from "../utils/logger";
+import {Wynn} from "../clients/wynn";
+
+export async function fetchWynn() {
+  const wynn = new Wynn();
+  const sports = await wynn.getSports();
+
+  console.log(sports);
+}
 
 export async function fetchMGM() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
