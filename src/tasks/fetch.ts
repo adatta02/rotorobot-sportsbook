@@ -4,6 +4,7 @@ import {Contest} from "../entity/contest";
 import {ContestBet} from "../entity/contestBet";
 import {ContestBetOdds} from "../entity/contestBetOdds";
 import {Sportsbook} from "../entity/sportsbook";
+import {log} from "../utils/logger";
 
 export async function fetchMGMCollegeBasketball() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
@@ -12,7 +13,7 @@ export async function fetchMGMCollegeBasketball() {
 
   const results = await betMgm.getCollegeBasketballGames();
 
-  console.log(`fetchMGMCollegeBasketball: found ${results.length} games`);
+  log(`fetchMGMCollegeBasketball: found ${results.length} games`);
 
   for(const item of results) {
     const key = `${item.title}-${item.startTime.toJSON()}`;

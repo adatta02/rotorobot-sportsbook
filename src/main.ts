@@ -2,18 +2,19 @@ import {init} from "./db";
 import {BetMGM} from "./clients/betmgm";
 import {fixtures} from "./tasks/fixtures";
 import {fetchMGMCollegeBasketball} from "./tasks/fetch";
+import {log} from "./utils/logger";
 
 const dotenv = require('dotenv');
 dotenv.config();
 
 (async () => {
   await init();
-  console.log("App is up...confirming fixtures...");
+  log(`App is up...confirming fixtures...`);
   await fixtures();
-  console.log('Trying BetMGM...');
+  log('Trying BetMGM...');
   await fetchMGMCollegeBasketball();
-  console.log('BetMGM done!');
-  console.log('Sleeping for 300 sec');
-  await new Promise(resolve => setTimeout(resolve, 300 * 1000));
+  log('BetMGM done!');
+  log('Sleeping for 60 sec');
+  await new Promise(resolve => setTimeout(resolve, 60 * 1000));
   process.exit(0);
 })();
