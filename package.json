@@ -16,6 +16,7 @@
     "dotenv": "^16.0.3",
     "eslint": "^8.36.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "moment": "^2.29.4",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.21",
     "prettier": "^2.8.4",

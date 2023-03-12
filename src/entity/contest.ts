@@ -5,6 +5,9 @@ export class Contest {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ nullable: false, unique: true })
+  key: string;
+
   @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
 

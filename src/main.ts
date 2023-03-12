@@ -9,5 +9,6 @@ dotenv.config();
   console.log("We're up!");
   const betMGM = new BetMGM();
 
-  console.log( await betMGM.getSports() );
+  const mgmCollegeBasketball = await betMGM.getCollegeBasketballGames();
+  console.log( mgmCollegeBasketball );
 })();
