@@ -69,7 +69,18 @@ export class BetMGM {
       const contests: ContestDto[] = [];
       for(const item of gamesToProcess) {
         const bets: ContestBetDto[] = [];
+        for(const game of item.games) {
+          for(const gameBet of game.results) {
+            bets.push({
+              type: game.name.value,
+              title: gameBet.name.value,
+              odds: gameBet.odds
+            });
+          }
+        }
+
         contests.push({
+          id: `${item.id}`,
           title: item.name.value,
           contestantOne: item.participants[0].name.value,
           contestantTwo: item.participants[1].name.value,
