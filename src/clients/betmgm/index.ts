@@ -11,6 +11,7 @@ import {ISport} from "../types";
 import {ContestDto} from "../../dto/contestDto";
 import * as moment from 'moment';
 import {ContestBetDto} from "../../dto/contestBet.dto";
+import {log} from "../../utils/logger";
 
 const BASE_URL = 'https://sports.ma.betmgm.com';
 
@@ -20,17 +21,28 @@ export class BetMGM {
 
   private _clientConfig: IBwinClientConfig;
 
-  // https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=7&regionId=9&competitionId=264&compoundCompetitionId=1:264&forceFresh=1
-  // https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=SportLobby&sportId=4&forceFresh=1
-  // https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=12&regionId=9&competitionId=34&compoundCompetitionId=1:34&forceFresh=1
+  private sportCompetitionList = [
+    {label: 'College Basketball', sportId: '7', competitionId: '264'},
+    {label: 'NBA', sportId: '7', competitionId: '6004'},
+    {label: 'NHL', sportId: '12', competitionId: '34'},
+    {label: 'PGA', sportId: '13', competitionId: '375'},
+    {label: 'WBC', sportId: '23', competitionId: '7405'},
+  ];
 
-  public async getCollegeBasketballGames(): Promise<ContestDto[]> {
-    return this.geCompetitionGames('7', '264');
+  public async getAllGames(): Promise<ContestDto[]> {
+    let results: ContestDto[] = [];
+    for(const config of this.sportCompetitionList) {
+      const r = await this.geCompetitionGames(config.sportId, config.competitionId);
+      results = results.concat(r);
+    }
+    return results;
   }
 
   private async geCompetitionGames(sportId: string, competitionId: string): Promise<ContestDto[]> {
+    log(`geCompetitionGames: ${sportId}`);
+
     try {
-      const url = `https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=${sportId}&regionId=9&competitionId=${competitionId}&compoundCompetitionId=1:264&forceFresh=1`;
+      const url = `https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=${sportId}&regionId=9&competitionId=${competitionId}&compoundCompetitionId=1:${competitionId}&forceFresh=1`;
       const result = await axios.get<IBwinCompetitionLobby>(url, {headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
       }});
@@ -83,6 +95,10 @@ export class BetMGM {
               odds: gameBet.odds
             });
           }
+        }
+
+        if(item.participants.length === 0) {
+          continue;
         }
 
         contests.push({

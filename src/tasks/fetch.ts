@@ -6,15 +6,15 @@ import {ContestBetOdds} from "../entity/contestBetOdds";
 import {Sportsbook} from "../entity/sportsbook";
 import {log} from "../utils/logger";
 
-export async function fetchMGMCollegeBasketball() {
+export async function fetchMGM() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
   const datasource = getDatasource();
   const betMgm = new BetMGM();
   let newOdds = 0;
 
-  const results = await betMgm.getCollegeBasketballGames();
+  const results = await betMgm.getAllGames();
 
-  log(`fetchMGMCollegeBasketball: found ${results.length} games`);
+  log(`fetchMGM: found ${results.length} games`);
 
   for(const item of results) {
     const key = `${item.title}-${item.startTime.toJSON()}`;
