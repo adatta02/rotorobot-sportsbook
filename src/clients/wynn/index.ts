@@ -9,12 +9,44 @@ const BET_TYPE_MAP = {
   'Handicap (2 Way)': 'Spread',
   'Money Line': 'Money Line',
   'Total Points Over/Under': 'Totals',
+  'Fight Result (Draw No Bet)': 'Money Line'
 };
+
+// All sports are
+/*
+[
+  { id: '45', name: 'Basketball' },
+  { id: '61', name: 'Hockey' },
+  { id: '33', name: 'Soccer' },
+  { id: '5', name: 'Tennis' },
+  { id: '75', name: 'Baseball' },
+  { id: '27', name: 'Auto Racing' },
+  { id: '28', name: 'Football' },
+  { id: '392', name: 'Boxing' },
+  { id: '3', name: 'Golf' },
+  { id: '67', name: 'MMA' },
+  { id: '32', name: 'Formula 1' },
+  { id: '4', name: 'Darts' },
+  { id: '15', name: 'Australian Rules' }
+]
+ */
 
 // Looks like this is built on https://www.whitehatgaming.com/
 export class Wynn {
 
   public static readonly NAME = "Wynn";
+
+  private sportCompetitionList = [
+    {label: 'Basketball', sportId: '45'},
+    {label: 'NHL', sportId: '61'},
+    {label: 'PGA', sportId: '3'},
+    {label: 'Darts', sportId: '4'},
+    {label: 'MMA', sportId: '67'},
+  ];
+
+  public getActivatedSports() {
+    return this.sportCompetitionList;
+  }
 
   public async getMatches(categoryId: string): Promise<ContestDto[]> {
     const url = `https://fo.wynnbet-ma-web.gansportsbook.com/s/sbgate/sports/fo-category/?categoryId=${categoryId}&country=US&isMobile=0&language=us&layout=AMERICAN&limit=6&province`;
@@ -48,11 +80,11 @@ export class Wynn {
           const bets: ContestBetDto[] = [];
 
           for (const game of itemMatches.markets) {
-            if (game.status !== 'OPEN' || !game.outcomes || game.outcomes.length < 2) {
+            if (game.status !== 'OPEN'
+              || !game.outcomes
+              || game.outcomes.length < 2) {
               continue;
             }
-
-            let odds = -1;
 
             if (game.name === 'Handicap (2 Way)') {
               let lineStr = '';
@@ -82,7 +114,7 @@ export class Wynn {
                 odds: oddsResult.data[game.outcomes[1].id].value
               });
 
-            } else if (game.name === 'Money Line') {
+            } else if (game.name === 'Money Line' || game.name === 'Fight Result (Draw No Bet)') {
               bets.push({
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName}`,

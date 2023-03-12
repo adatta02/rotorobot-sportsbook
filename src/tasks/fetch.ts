@@ -6,15 +6,108 @@ import {ContestBetOdds} from "../entity/contestBetOdds";
 import {Sportsbook} from "../entity/sportsbook";
 import {log} from "../utils/logger";
 import {Wynn} from "../clients/wynn";
+import * as moment from 'moment';
+import {ContestDto} from "../dto/contestDto";
+import {ContestBetDto} from "../dto/contestBet.dto";
+
+async function contestDTOToContest(item: ContestDto): Promise<Contest> {
+  const datasource = getDatasource();
+  const startTime = moment(item.startTime).format('Y-MM-DD');
+  const key = `${item.title}-${startTime}`;
+
+  let contest = await datasource.getRepository(Contest).findOneBy({key});
+  if(!contest) {
+    contest = new Contest();
+    contest.key = key;
+    contest.title = item.title;
+    contest.contestantOne = item.contestantOne;
+    contest.contestantTwo = item.contestantTwo;
+    contest.startTime = item.startTime;
+    contest.isLive = item.isLive;
+
+    await datasource.manager.save(contest);
+  }
+
+  return contest;
+}
+
+async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): Promise<ContestBet> {
+  const datasource = getDatasource();
+  const key = `${bet.type}-${bet.title}`;
+  let contestBet = await datasource.getRepository(ContestBet).findOneBy({key: key, contest: {id: contest.id}});
+  if(!contestBet) {
+    contestBet = new ContestBet();
+    contestBet.contest = contest;
+    contestBet.key = key;
+    contestBet.title = bet.title;
+    contestBet.type = bet.type;
+
+    await datasource.manager.save(contestBet);
+  }
+
+  return contestBet;
+}
+
+async function contestDTOBetOddsToContestBetOdds(sportsbook: Sportsbook,
+                                                 contestBet: ContestBet,
+                                                 contestBetDto: ContestBetDto): Promise<{isNew: boolean, odds: ContestBetOdds}> {
+  const datasource = getDatasource();
+  let odds = await datasource
+    .getRepository(ContestBetOdds)
+    .createQueryBuilder('u')
+    .where('u.contestBet.id = :contestBetId AND u.sportsbook.id = :sportsbookId AND u.odds = :odds')
+    .setParameters({contestBetId: contestBet.id, sportsbookId: sportsbook.id, odds: contestBetDto.odds})
+    .getOne();
+
+  const isNew = odds ? false : true;
+  if(!odds) {
+    await datasource.createQueryBuilder()
+      .update(ContestBetOdds)
+      .set({isLatest: false})
+      .where('contestBet.id = :contestBetId AND sportsbook.id = :sportsbookId')
+      .setParameters({sportsbookId: sportsbook.id, contestBetId: contestBet.id})
+      .execute();
+
+    odds = new ContestBetOdds();
+    odds.sportsbook = sportsbook;
+    odds.contestBet = contestBet;
+    odds.odds = contestBetDto.odds;
+    odds.isLatest = true;
+    await datasource.manager.save(odds);
+  }
+
+  return {isNew, odds};
+}
 
 export async function fetchWynn() {
+  const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: Wynn.NAME});
+  const datasource = getDatasource();
   const wynn = new Wynn();
-  const sports = await wynn.getSports();
 
-  for(const s of sports) {
-    const matches = await wynn.getMatches(s.id);
-    console.log(matches);
+  let newOdds = 0;
+
+  for(const s of wynn.getActivatedSports()) {
+    const matches = await wynn.getMatches(s.sportId);
+    log(`fetchMGM: found ${matches.length} games`);
+
+    for(const match of matches) {
+      if(match.bets.length === 0) {
+        log(`No bets for: ${match.title}`);
+        continue;
+      }
+
+      const contest = await contestDTOToContest(match);
+      for(const bet of match.bets) {
+        const contestBet = await contestDTOBetToContestBet(contest, bet);
+        const odds = await contestDTOBetOddsToContestBetOdds(sportsbook, contestBet, bet);
+        if(odds.isNew) {
+          newOdds += 1;
+        }
+      }
+    }
   }
+
+  log(`Found ${newOdds} new lines!`);
 }
 
 export async function fetchMGM() {
@@ -28,54 +121,12 @@ export async function fetchMGM() {
   log(`fetchMGM: found ${results.length} games`);
 
   for(const item of results) {
-    const key = `${item.title}-${item.startTime.toJSON()}`;
-    let contest = await datasource.getRepository(Contest).findOneBy({key});
-    if(!contest) {
-      contest = new Contest();
-      contest.key = key;
-      contest.title = item.title;
-      contest.contestantOne = item.contestantOne;
-      contest.contestantTwo = item.contestantTwo;
-      contest.startTime = item.startTime;
-      contest.isLive = item.isLive;
-    }
+    const contest = await contestDTOToContest(item);
 
-    await datasource.manager.save(contest);
     for(const bet of item.bets) {
-      const key = `${bet.type}-${bet.title}`;
-      let contestBet = await datasource.getRepository(ContestBet).findOneBy({key: key, contest: {id: contest.id}});
-      if(!contestBet) {
-        contestBet = new ContestBet();
-        contestBet.contest = contest;
-        contestBet.key = key;
-        contestBet.title = bet.title;
-        contestBet.type = bet.type;
-      }
-
-      await datasource.manager.save(contestBet);
-      let odds = await datasource
-                              .getRepository(ContestBetOdds)
-                              .createQueryBuilder('u')
-                              .where('u.contestBet.id = :contestBetId AND u.sportsbook.id = :sportsbookId AND u.odds = :odds')
-                              .setParameters({contestBetId: contestBet.id, sportsbookId: sportsbook.id, odds: bet.odds})
-                              .getOne();
-
-      if(!odds) {
-
-        await datasource.createQueryBuilder()
-          .update(ContestBetOdds)
-          .set({isLatest: false})
-          .where('contestBet.id = :contestBetId AND sportsbook.id = :sportsbookId')
-          .setParameters({sportsbookId: sportsbook.id, contestBetId: contestBet.id})
-          .execute();
-
-        odds = new ContestBetOdds();
-        odds.sportsbook = sportsbook;
-        odds.contestBet = contestBet;
-        odds.odds = bet.odds;
-        odds.isLatest = true;
-        await datasource.manager.save(odds);
-
+      const contestBet = await contestDTOBetToContestBet(contest, bet);
+      const odds = await contestDTOBetOddsToContestBetOdds(sportsbook, contestBet, bet);
+      if(odds.isNew) {
         newOdds += 1;
       }
     }

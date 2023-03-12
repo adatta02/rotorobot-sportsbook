@@ -87,7 +87,7 @@ export interface IWynnSportsOutcomesEntity {
 export interface IWynnSportsResponseBet {
   id: number;
   sequence: IWynnSportsSequence;
-  name: 'Handicap (2 Way)' | 'Money Line' | 'Total Points Over/Under';
+  name: 'Handicap (2 Way)' | 'Money Line' | 'Total Points Over/Under' | 'Fight Result (Draw No Bet)';
   status: 'SUSPENDED' | 'OPEN';
   line: string;
   view_type: string;
