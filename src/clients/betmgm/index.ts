@@ -16,6 +16,8 @@ const BASE_URL = 'https://sports.ma.betmgm.com';
 
 export class BetMGM {
 
+  public static readonly NAME = 'BetMGM';
+
   private _clientConfig: IBwinClientConfig;
 
   // https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=7&regionId=9&competitionId=264&compoundCompetitionId=1:264&forceFresh=1
@@ -23,8 +25,12 @@ export class BetMGM {
   // https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=12&regionId=9&competitionId=34&compoundCompetitionId=1:34&forceFresh=1
 
   public async getCollegeBasketballGames(): Promise<ContestDto[]> {
+    return this.geCompetitionGames('7', '264');
+  }
+
+  private async geCompetitionGames(sportId: string, competitionId: string): Promise<ContestDto[]> {
     try {
-      const url = `https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=7&regionId=9&competitionId=264&compoundCompetitionId=1:264&forceFresh=1`;
+      const url = `https://sports.ma.betmgm.com/en/sports/api/widget?layoutSize=Large&page=CompetitionLobby&sportId=${sportId}&regionId=9&competitionId=${competitionId}&compoundCompetitionId=1:264&forceFresh=1`;
       const result = await axios.get<IBwinCompetitionLobby>(url, {headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
       }});
@@ -38,7 +44,7 @@ export class BetMGM {
         "compoundCompetitionId": "1:264",
         "widgetId": "/mobilesports-v1.0/layout/layout_us/modules/competition/prematchevents"
       }];
-      const urlBatch = `https://sports.ma.betmgm.com/en/sports/api/widget/batch?layoutSize=Large&page=CompetitionLobby&sportId=7&regionId=9&competitionId=264&compoundCompetitionId=1:264&forceFresh=1`;
+      const urlBatch = `https://sports.ma.betmgm.com/en/sports/api/widget/batch?layoutSize=Large&page=CompetitionLobby&sportId=${sportId}&regionId=9&competitionId=${competitionId}&compoundCompetitionId=1:264&forceFresh=1`;
       const resultBatch = await axios.post<IBwinBatchLobby>(urlBatch, payload, {headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
           'content-type': 'application/json',

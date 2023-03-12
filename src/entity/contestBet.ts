@@ -1,5 +1,6 @@
-import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ContestBetOdds} from "./contestBetOdds";
+import {Contest} from "./contest";
 
 @Entity()
 export class ContestBet {
@@ -14,6 +15,14 @@ export class ContestBet {
 
   @Column({ nullable: false })
   type: string;
+
+  @Column({ nullable: false })
+  key: string;
+
+  @ManyToOne(() => Contest, (contest) => contest.contestBets, {
+    onDelete: 'CASCADE',
+  })
+  contest: Contest;
 
   @OneToMany(() => ContestBetOdds, (odds) => odds.contestBet)
   contestOdds!: ContestBetOdds[];

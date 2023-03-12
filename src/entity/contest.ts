@@ -1,4 +1,6 @@
 import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {ContestBetOdds} from "./contestBetOdds";
+import {ContestBet} from "./contestBet";
 
 @Entity()
 export class Contest {
@@ -34,4 +36,7 @@ export class Contest {
 
   @Column({ nullable: false })
   contestantTwoScore: string;
+
+  @OneToMany(() => ContestBet, (bet) => bet.contest)
+  contestBets!: ContestBet[];
 }

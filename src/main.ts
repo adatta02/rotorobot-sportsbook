@@ -1,14 +1,17 @@
 import {init} from "./db";
 import {BetMGM} from "./clients/betmgm";
+import {fixtures} from "./tasks/fixtures";
+import {fetchMGMCollegeBasketball} from "./tasks/fetch";
 
 const dotenv = require('dotenv');
 dotenv.config();
 
 (async () => {
   await init();
-  console.log("We're up!");
-  const betMGM = new BetMGM();
-
-  const mgmCollegeBasketball = await betMGM.getCollegeBasketballGames();
-  console.log( mgmCollegeBasketball );
+  console.log("App is up...confirming fixtures...");
+  await fixtures();
+  console.log('Trying BetMGM...');
+  await fetchMGMCollegeBasketball();
+  console.log('BetMGM done!');
+  process.exit(0);
 })();
