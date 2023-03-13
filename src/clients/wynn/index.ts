@@ -5,6 +5,7 @@ import {IWynnCategoryResponse, IWynnSportsOdds, IWynnSportsResponseEntry} from "
 import {ContestDto} from "../../dto/contestDto";
 import {ContestBetDto} from "../../dto/contestBet.dto";
 import {log} from "../../utils/logger";
+const uniqid = require('uniqid');
 
 const BET_TYPE_MAP = {
   'Handicap (2 Way)': 'Spread',
@@ -96,6 +97,8 @@ export class Wynn {
               continue;
             }
 
+            const pair = uniqid();
+
             if (game.name === 'Handicap (2 Way)') {
               let lineStr = '';
               if (game.raw_line > 0) {
@@ -113,12 +116,14 @@ export class Wynn {
               }
 
               bets.push({
+                pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName} ${inverseLineStr}`,
                 odds: oddsResult.data[game.outcomes[0].id].value
               });
 
               bets.push({
+                pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `${homeTeamName} ${lineStr}`,
                 odds: oddsResult.data[game.outcomes[1].id].value
@@ -126,24 +131,28 @@ export class Wynn {
 
             } else if (game.name === 'Money Line' || game.name === 'Fight Result (Draw No Bet)') {
               bets.push({
+                pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName}`,
                 odds: oddsResult.data[game.outcomes[0].id].value
               });
 
               bets.push({
+                pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `${homeTeamName}`,
                 odds: oddsResult.data[game.outcomes[1].id].value
               });
             } else if (game.name === 'Total Points Over/Under') {
               bets.push({
+                pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `Over ${game.line}`,
                 odds: oddsResult.data[game.outcomes[0].id].value
               });
 
               bets.push({
+                pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `Under ${game.line}`,
                 odds: oddsResult.data[game.outcomes[1].id].value

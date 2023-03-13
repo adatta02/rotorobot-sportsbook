@@ -3,6 +3,7 @@ import {BetMGM} from "./clients/betmgm";
 import {fixtures} from "./tasks/fixtures";
 import {fetchMGM, fetchWynn} from "./tasks/fetch";
 import {log} from "./utils/logger";
+import {findArbs} from "./tasks/findArbs";
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -19,6 +20,8 @@ dotenv.config();
   log('Trying Wynn...');
   await fetchWynn();
   log('Wynn done!');
+
+  await findArbs();
 
   log('Sleeping for 60 sec');
   await new Promise(resolve => setTimeout(resolve, 60 * 1000));

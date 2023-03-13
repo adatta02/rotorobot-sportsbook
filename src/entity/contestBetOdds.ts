@@ -17,8 +17,12 @@ export class ContestBetOdds {
   @Column({ nullable: false })
   isLatest: boolean;
 
+  @Column({ nullable: false })
+  isArb: boolean;
+
   @ManyToOne(() => Sportsbook, (sportsbook) => sportsbook.contestOdds, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   sportsbook: Sportsbook;
 
@@ -26,4 +30,5 @@ export class ContestBetOdds {
     onDelete: 'CASCADE',
   })
   contestBet: ContestBet;
+
 }

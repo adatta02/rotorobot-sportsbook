@@ -45,8 +45,9 @@ async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): 
   const key = `${bet.type}-${bet.title}`;
   let contestBet = await datasource.getRepository(ContestBet).findOneBy({key: key, contest: {id: contest.id}});
   if(!contestBet) {
-    log(`Could not find bet: ${key}`);
+    // log(`Could not find bet: ${key}`);
     contestBet = new ContestBet();
+    contestBet.pairId = bet.pairId;
     contestBet.contest = contest;
     contestBet.key = key;
     contestBet.title = bet.title;
@@ -83,6 +84,7 @@ async function contestDTOBetOddsToContestBetOdds(sportsbook: Sportsbook,
     odds.contestBet = contestBet;
     odds.odds = contestBetDto.odds;
     odds.isLatest = true;
+    odds.isArb = false;
     await datasource.manager.save(odds);
   }
 

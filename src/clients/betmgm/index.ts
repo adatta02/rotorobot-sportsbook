@@ -12,6 +12,7 @@ import {ContestDto} from "../../dto/contestDto";
 import * as moment from 'moment';
 import {ContestBetDto} from "../../dto/contestBet.dto";
 import {log} from "../../utils/logger";
+const uniqid = require('uniqid');
 
 const BASE_URL = 'https://sports.ma.betmgm.com';
 
@@ -59,6 +60,8 @@ export class BetMGM {
       for(const item of result.data.fixtures) {
         const bets: ContestBetDto[] = [];
         for(const game of item.games) {
+
+          const pair = uniqid();
           for(const gameBet of game.results) {
             let title = gameBet.name.value;
             if(game.name.value === 'Money Line') {
@@ -71,6 +74,7 @@ export class BetMGM {
             }
 
             bets.push({
+              pairId: pair,
               type: game.name.value,
               title: title,
               odds: gameBet.odds

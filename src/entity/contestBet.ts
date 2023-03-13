@@ -11,6 +11,9 @@ export class ContestBet {
   createdAt!: Date;
 
   @Column({ nullable: false })
+  pairId: string;
+
+  @Column({ nullable: false })
   title: string;
 
   @Column({ nullable: false })
