@@ -51,9 +51,14 @@ export async function findArbs() {
           if(odd.sportsbook !== bodd.sportsbook) {
             const val = (1 / odd.odds) + (1 / bodd.odds );
             if(val < 1) {
-              log(`Found arb! ${bets[0].title}. ev = ${val}`);
-              log(odd)
-              log(bodd);
+              log(`Found arb!`);
+              if(odd.odds < bodd.odds) {
+                const cover = (100 * (odd.odds / bodd.odds)).toFixed(2);
+                log(`Bet $100 on ${odd.contestBet.title} and ${cover} on ${bodd.contestBet.title}`);
+              }else{
+                const cover = (100 * (bodd.odds/ odd.odds)).toFixed(2);
+                log(`Bet $100 on ${bodd.contestBet.title} and ${cover} on ${odd.contestBet.title}`);
+              }
               odd.isArb = true;
               bodd.isArb = true;
               await datasource.manager.save([odd, bodd]);

@@ -28,6 +28,7 @@ export class ContestBetOdds {
 
   @ManyToOne(() => ContestBet, (contestBet) => contestBet.contestOdds, {
     onDelete: 'CASCADE',
+    eager: true
   })
   contestBet: ContestBet;
 
