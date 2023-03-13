@@ -54,10 +54,10 @@ export async function findArbs() {
               log(`Found arb!`);
               if(odd.odds < bodd.odds) {
                 const cover = (100 * (odd.odds / bodd.odds)).toFixed(2);
-                log(`Bet $100 on ${odd.contestBet.title} and ${cover} on ${bodd.contestBet.title}`);
+                log(`Bet $100 on ${odd.contestBet.title} (${odd.odds}) and $${cover} on ${bodd.contestBet.title} (${bodd.odds})`);
               }else{
                 const cover = (100 * (bodd.odds/ odd.odds)).toFixed(2);
-                log(`Bet $100 on ${bodd.contestBet.title} and ${cover} on ${odd.contestBet.title}`);
+                log(`Bet $100 on ${bodd.contestBet.title} (${bodd.odds}) and $${cover} on ${odd.contestBet.title} (${odd.odds})`);
               }
               odd.isArb = true;
               bodd.isArb = true;
