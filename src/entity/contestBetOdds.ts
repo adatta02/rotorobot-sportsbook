@@ -20,6 +20,9 @@ export class ContestBetOdds {
   @Column({ nullable: false })
   isArb: boolean;
 
+  @Column({ nullable: true, type: "decimal", precision: 6, scale: 4 })
+  arbEv: number;
+
   @ManyToOne(() => Sportsbook, (sportsbook) => sportsbook.contestOdds, {
     onDelete: 'CASCADE',
     eager: true,
