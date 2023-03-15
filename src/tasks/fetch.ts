@@ -43,10 +43,12 @@ async function contestDTOToContest(item: ContestDto): Promise<Contest> {
   return contest;
 }
 
-async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): Promise<ContestBet> {
+async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): Promise<{isNew: boolean, contestBet: ContestBet}> {
   const datasource = getDatasource();
   const key = `${bet.type}-${bet.title}`;
   let contestBet = await datasource.getRepository(ContestBet).findOneBy({key: key, contest: {id: contest.id}});
+
+  const isNew = contestBet ? false : true;
   if(!contestBet) {
     if(process.env.DEBUG) {
       log(`Could not find bet: ${contest.title} ${key}`);
@@ -63,7 +65,7 @@ async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): 
   contestBet.isLatest = true;
   await datasource.manager.save(contestBet);
 
-  return contestBet;
+  return {isNew, contestBet};
 }
 
 async function contestDTOBetOddsToContestBetOdds(sportsbook: Sportsbook,
@@ -98,6 +100,7 @@ export async function fetchWynn() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: Wynn.NAME});
   const wynn = new Wynn();
 
+  let newBets = 0;
   let newOdds = 0;
   const matches = await wynn.getAllGames();
 
@@ -107,7 +110,11 @@ export async function fetchWynn() {
   for(const match of matches) {
     const contest = await contestDTOToContest(match);
     for(const bet of match.bets) {
-      const contestBet = await contestDTOBetToContestBet(contest, bet);
+      const result = await contestDTOBetToContestBet(contest, bet);
+      if(result.isNew) {
+        newBets += 1;
+      }
+      const contestBet = result.contestBet;
       const odds = await contestDTOBetOddsToContestBetOdds(sportsbook, contestBet, bet);
       if(odds.isNew) {
         newOdds += 1;
@@ -115,7 +122,7 @@ export async function fetchWynn() {
     }
   }
 
-  log(`Found ${newOdds} new lines!`);
+  log(`Found ${newBets} new bets and ${newOdds} new lines!`);
 }
 
 export async function fetchMGM() {
@@ -123,6 +130,7 @@ export async function fetchMGM() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
   const betMgm = new BetMGM();
   let newOdds = 0;
+  let newBets = 0;
 
   const results = await betMgm.getAllGames();
 
@@ -134,7 +142,11 @@ export async function fetchMGM() {
     const contest = await contestDTOToContest(item);
 
     for(const bet of item.bets) {
-      const contestBet = await contestDTOBetToContestBet(contest, bet);
+      const result = await contestDTOBetToContestBet(contest, bet);
+      const contestBet = result.contestBet;
+      if(result.isNew) {
+        newBets += 1;
+      }
       const odds = await contestDTOBetOddsToContestBetOdds(sportsbook, contestBet, bet);
       if(odds.isNew) {
         newOdds += 1;
@@ -142,5 +154,5 @@ export async function fetchMGM() {
     }
   }
 
-  log(`Found ${newOdds} new lines!`);
+  log(`Found ${newBets} new bets and ${newOdds} new lines!`);
 }
