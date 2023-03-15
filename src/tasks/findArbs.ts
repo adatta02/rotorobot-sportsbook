@@ -13,9 +13,8 @@ export async function findArbs() {
     .orderBy('u.title', 'ASC')
     .getMany();
 
-  log(`findArbs: found ${futureContests.length} contests.`);
-
   const foundArbs: Map<Contest, ContestBetOdds[]> = new Map<Contest, ContestBetOdds[]>();
+  let numBetsChecked = 0;
 
   for(const contest of futureContests) {
     const contestBets = await datasource
@@ -37,6 +36,7 @@ export async function findArbs() {
         continue;
       }
 
+      numBetsChecked += 1;
       const aOdds = await datasource.getRepository(ContestBetOdds).findBy({contestBet: {id: bets[0].id}, isLatest: true});
       const bOdds = await datasource.getRepository(ContestBetOdds).findBy({contestBet: {id: bets[1].id}, isLatest: true});
 
@@ -82,10 +82,13 @@ export async function findArbs() {
     }
   }
 
+  log(`findArbs: Found ${futureContests.length} contests and checked ${numBetsChecked} bets.`);
+
   if(foundArbs.size === 0) {
     log('findArbs: No arbs!');
   }
 
+  const BET_AMOUNT = 250;
   for(const contest of foundArbs.keys()) {
     const bets = foundArbs.get(contest) ?? [];
     log(`${contest.title}: ${bets.length} arbs`);
@@ -99,10 +102,10 @@ export async function findArbs() {
         continue;
       }
 
-      const profit = ((500 / arbEv) - 500).toFixed(2);
-      const cover = (500 * (odd.odds / bodd.odds)).toFixed(2);
+      const profit = ((BET_AMOUNT / arbEv) - BET_AMOUNT).toFixed(2);
+      const cover = (BET_AMOUNT * (odd.odds / bodd.odds)).toFixed(2);
 
-      log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $500`);
+      log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $${BET_AMOUNT}`);
       log(`\t${bodd.sportsbook.name}: '${bodd.contestBet.title}' (${convertDecimalToAmerican(bodd.odds)}) Bet $${cover}`);
       log(`Profit: ${profit}`);
     }
