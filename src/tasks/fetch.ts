@@ -24,7 +24,10 @@ async function contestDTOToContest(item: ContestDto): Promise<Contest> {
                                 .setParameters({keys})
                                 .getOne()
   if(!contest) {
-    log(`Could not find contest: ${keys[0]}`);
+
+    if(process.env.DEBUG) {
+      log(`Could not find contest: ${keys[0]}`);
+    }
 
     contest = new Contest();
     contest.key = keys[0];
@@ -45,7 +48,10 @@ async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): 
   const key = `${bet.type}-${bet.title}`;
   let contestBet = await datasource.getRepository(ContestBet).findOneBy({key: key, contest: {id: contest.id}});
   if(!contestBet) {
-    // log(`Could not find bet: ${key}`);
+    if(process.env.DEBUG) {
+      log(`Could not find bet: ${contest.title} ${key}`);
+    }
+
     contestBet = new ContestBet();
     contestBet.pairId = bet.pairId;
     contestBet.contest = contest;
@@ -102,11 +108,6 @@ export async function fetchWynn() {
   fs.writeFileSync('/tmp/fetchWynn.json', JSON.stringify(matches, null, 4));
 
   for(const match of matches) {
-    if(match.bets.length === 0) {
-      log(`No bets for: ${match.title}`);
-      continue;
-    }
-
     const contest = await contestDTOToContest(match);
     for(const bet of match.bets) {
       const contestBet = await contestDTOBetToContestBet(contest, bet);
