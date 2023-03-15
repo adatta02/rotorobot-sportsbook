@@ -15,13 +15,9 @@ dotenv.config();
   log(`App is up...confirming fixtures...`);
   await fixtures();
 
-  log('Trying BetMGM...');
   await fetchMGM();
-  log('BetMGM done!');
 
-  log('Trying Wynn...');
   await fetchWynn();
-  log('Wynn done!');
 
   await findArbs();
 

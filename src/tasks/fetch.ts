@@ -93,6 +93,8 @@ async function contestDTOBetOddsToContestBetOdds(sportsbook: Sportsbook,
 }
 
 export async function fetchWynn() {
+  log('fetchWynn: starting...');
+
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: Wynn.NAME});
   const wynn = new Wynn();
 
@@ -100,6 +102,7 @@ export async function fetchWynn() {
   const matches = await wynn.getAllGames();
 
   fs.writeFileSync('/tmp/fetchWynn.json', JSON.stringify(matches, null, 4));
+  log(`fetchWynn: found ${matches.length} games`);
 
   for(const match of matches) {
     const contest = await contestDTOToContest(match);
@@ -116,6 +119,7 @@ export async function fetchWynn() {
 }
 
 export async function fetchMGM() {
+  log('fetchMGM: starting...');
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
   const betMgm = new BetMGM();
   let newOdds = 0;
