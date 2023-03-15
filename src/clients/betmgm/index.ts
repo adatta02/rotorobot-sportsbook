@@ -47,7 +47,7 @@ export class BetMGM {
     const url = `https://sports.ma.betmgm.com/cds-api/bettingoffer/fixtures?x-bwin-accessid=${clientConfig.msApp.publicAccessId}`
               + `&lang=en-us&country=US&userCountry=US&subdivision=US-Massachusetts&fixtureTypes=Standard&state=Latest&offerMapping=Filtered`
               + `&offerCategories=Gridable&fixtureCategories=Gridable,NonGridable,Other&sportIds=${sportId}&regionIds=9`
-              + `&conferenceIds=&isPriceBoost=false&skip=0&take=50&sortBy=Tags`;
+              + `&conferenceIds=&isPriceBoost=false&skip=0&take=500&sortBy=Tags`;
 
     try {
       const result = await axios.get<IBwinFixturesResponse>(url, {

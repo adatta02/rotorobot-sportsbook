@@ -3,6 +3,7 @@ import {Contest} from "../entity/contest";
 import {log} from "../utils/logger";
 import {ContestBet} from "../entity/contestBet";
 import {ContestBetOdds} from "../entity/contestBetOdds";
+import {convertDecimalToAmerican} from "../utils";
 
 export async function findArbs() {
   const datasource = getDatasource();
@@ -12,7 +13,7 @@ export async function findArbs() {
     .orderBy('u.title', 'ASC')
     .getMany();
 
-  log(`Found ${futureContests.length} contests.`);
+  log(`findArbs: found ${futureContests.length} contests.`);
 
   const foundArbs: Map<Contest, ContestBetOdds[]> = new Map<Contest, ContestBetOdds[]>();
 
@@ -35,8 +36,13 @@ export async function findArbs() {
       if(bets.length < 2) {
         continue;
       }
+
       const aOdds = await datasource.getRepository(ContestBetOdds).findBy({contestBet: {id: bets[0].id}, isLatest: true});
       const bOdds = await datasource.getRepository(ContestBetOdds).findBy({contestBet: {id: bets[1].id}, isLatest: true});
+
+      if(process.env.DEBUG) {
+        log(`Checking ${contest.title}: ${bets[0].title} (${aOdds.length}) vs. ${bets[1].title} (${bOdds.length})`);
+      }
 
       const aOddsBySportsBook: Record<number, ContestBetOdds> = {};
       const bOddsBySportsBook: Record<number, ContestBetOdds> = {};
@@ -76,6 +82,10 @@ export async function findArbs() {
     }
   }
 
+  if(foundArbs.size === 0) {
+    log('findArbs: No arbs!');
+  }
+
   for(const contest of foundArbs.keys()) {
     const bets = foundArbs.get(contest) ?? [];
     log(`${contest.title}: ${bets.length} arbs`);
@@ -92,9 +102,10 @@ export async function findArbs() {
       const profit = ((500 / arbEv) - 500).toFixed(2);
       const cover = (500 * (odd.odds / bodd.odds)).toFixed(2);
 
-      log(`\t ${odd.sportsbook.name}: '${odd.contestBet.title}' Bet $500`);
-      log(`\t ${bodd.sportsbook.name}: '${bodd.contestBet.title}' Bet $${cover}`);
+      log(`\tProfit: ${profit}`);
+      log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $500`);
+      log(`\t${bodd.sportsbook.name}: '${bodd.contestBet.title}' (${convertDecimalToAmerican(bodd.odds)}) Bet $${cover}`);
     }
-
   }
+
 }

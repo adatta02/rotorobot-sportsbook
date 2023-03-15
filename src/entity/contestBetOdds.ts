@@ -44,8 +44,7 @@ export class ContestBetOdds {
   contestBet: ContestBet;
 
   @ManyToOne(() => ContestBetOdds, (contestBetOdd) => contestBetOdd.mainBets, {
-    onDelete: 'CASCADE',
-    eager: true
+    onDelete: 'CASCADE'
   })
   coverBet?: ContestBetOdds;
 
