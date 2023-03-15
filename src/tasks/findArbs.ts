@@ -84,7 +84,7 @@ export async function findArbs() {
     }
   }
 
-  log(`findArbs: Found ${futureContests.length} contests, checked ${numBetsChecked} bets, minEv=${minEv}.`);
+  log(`findArbs: Found ${futureContests.length} contests, checked ${numBetsChecked} bets, minEv=${minEv.toFixed(4)}.`);
 
   if(foundArbs.size === 0) {
     log('findArbs: No arbs!');
