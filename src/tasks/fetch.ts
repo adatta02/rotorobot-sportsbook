@@ -79,21 +79,15 @@ async function contestDTOBetOddsToContestBetOdds(sportsbook: Sportsbook,
 
   const isNew = odds ? false : true;
   if(!odds) {
-    await datasource.createQueryBuilder()
-      .update(ContestBetOdds)
-      .set({isLatest: false})
-      .where('contestBet.id = :contestBetId AND sportsbook.id = :sportsbookId')
-      .setParameters({sportsbookId: sportsbook.id, contestBetId: contestBet.id})
-      .execute();
-
     odds = new ContestBetOdds();
     odds.sportsbook = sportsbook;
     odds.contestBet = contestBet;
     odds.odds = contestBetDto.odds;
-    odds.isLatest = true;
     odds.isArb = false;
-    await datasource.manager.save(odds);
   }
+
+  odds.isLatest = true;
+  await datasource.manager.save(odds);
 
   return {isNew, odds};
 }

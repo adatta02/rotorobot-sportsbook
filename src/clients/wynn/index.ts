@@ -160,7 +160,6 @@ export class Wynn {
             }
           }
 
-
           contests.push({
             id: `${itemMatches.id}`,
             title: itemMatches.name,
