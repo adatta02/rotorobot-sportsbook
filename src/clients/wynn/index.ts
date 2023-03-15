@@ -85,8 +85,8 @@ export class Wynn {
         for(const itemMatches of item.matches) {
 
           // TODO: Normalize these team names
-          const awayTeamName = itemMatches.away_team_name;
-          const homeTeamName = itemMatches.home_team_name;
+          const awayTeamName = itemMatches.away_team_name.replace('St.', 'State');
+          const homeTeamName = itemMatches.home_team_name.replace('St.', 'State');
 
           const bets: ContestBetDto[] = [];
 

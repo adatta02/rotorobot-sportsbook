@@ -88,7 +88,7 @@ export class BetMGM {
 
         contests.push({
           id: `${item.id}`,
-          title: item.name.value,
+          title: item.name.value.replace('(Neutral Venue)', '').trim(),
           contestantOne: item.participants[0].name.value,
           contestantTwo: item.participants[1].name.value,
           startTime: moment(item.startDate).toDate(),

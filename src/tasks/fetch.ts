@@ -35,11 +35,11 @@ async function contestDTOToContest(item: ContestDto): Promise<Contest> {
     contest.contestantOne = item.contestantOne;
     contest.contestantTwo = item.contestantTwo;
     contest.startTime = item.startTime;
-    contest.isLive = item.isLive;
-
-    await datasource.manager.save(contest);
   }
 
+  contest.isLive = item.isLive;
+  await datasource.manager.save(contest);
+  
   return contest;
 }
 

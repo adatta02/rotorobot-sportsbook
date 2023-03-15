@@ -9,7 +9,7 @@ export async function findArbs() {
   const datasource = getDatasource();
   const futureContests = await datasource.getRepository(Contest)
                                          .createQueryBuilder('u')
-    .where('u.startTime > NOW()')
+    .where('u.startTime > NOW() OR u.isLive = true')
     .orderBy('u.title', 'ASC')
     .getMany();
 
