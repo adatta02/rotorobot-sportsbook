@@ -15,6 +15,7 @@ export async function findArbs() {
 
   const foundArbs: Map<Contest, ContestBetOdds[]> = new Map<Contest, ContestBetOdds[]>();
   let numBetsChecked = 0;
+  let minEv = 100;
 
   for(const contest of futureContests) {
     const contestBets = await datasource
@@ -58,6 +59,7 @@ export async function findArbs() {
         for(const bodd of bOdds) {
           if(odd.sportsbook !== bodd.sportsbook) {
             const val = (1 / odd.odds) + (1 / bodd.odds );
+            minEv = Math.min(minEv, val);
             if(val < 1) {
               const lst = foundArbs.get(contest) ?? [];
               if(odd.odds < bodd.odds) {
@@ -82,7 +84,7 @@ export async function findArbs() {
     }
   }
 
-  log(`findArbs: Found ${futureContests.length} contests and checked ${numBetsChecked} bets.`);
+  log(`findArbs: Found ${futureContests.length} contests, checked ${numBetsChecked} bets, minEv=${minEv}.`);
 
   if(foundArbs.size === 0) {
     log('findArbs: No arbs!');
