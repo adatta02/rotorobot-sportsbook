@@ -93,7 +93,9 @@ export class Wynn {
           for (const game of itemMatches.markets) {
             if (game.status !== 'OPEN'
               || !game.outcomes
-              || game.outcomes.length < 2) {
+              || game.outcomes.length < 2
+              || oddsResult.data[game.outcomes[0].id].status !== 'OPEN'
+            ) {
               continue;
             }
 
