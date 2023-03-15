@@ -39,7 +39,7 @@ async function contestDTOToContest(item: ContestDto): Promise<Contest> {
 
   contest.isLive = item.isLive;
   await datasource.manager.save(contest);
-  
+
   return contest;
 }
 

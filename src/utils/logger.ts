@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-export function log(...args: any) {
+export function log(arg: string) {
   const d = moment().format();
-  console.log(`${d}:`, args);
+  console.log(`${d}:`, arg);
 }

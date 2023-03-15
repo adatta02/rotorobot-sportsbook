@@ -102,9 +102,9 @@ export async function findArbs() {
       const profit = ((500 / arbEv) - 500).toFixed(2);
       const cover = (500 * (odd.odds / bodd.odds)).toFixed(2);
 
-      log(`\tProfit: ${profit}`);
       log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $500`);
       log(`\t${bodd.sportsbook.name}: '${bodd.contestBet.title}' (${convertDecimalToAmerican(bodd.odds)}) Bet $${cover}`);
+      log(`Profit: ${profit}`);
     }
   }
 
