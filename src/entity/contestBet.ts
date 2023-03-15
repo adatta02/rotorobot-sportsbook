@@ -22,8 +22,12 @@ export class ContestBet {
   @Column({ nullable: false })
   key: string;
 
+  @Column({ nullable: false })
+  isLatest: boolean;
+
   @ManyToOne(() => Contest, (contest) => contest.contestBets, {
     onDelete: 'CASCADE',
+    eager: true
   })
   contest: Contest;
 

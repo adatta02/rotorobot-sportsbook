@@ -12,10 +12,14 @@ export async function findArbs() {
     .orderBy('u.title', 'ASC')
     .getMany();
 
-  log(`Found ${futureContests.length} contests`);
+  log(`Found ${futureContests.length} contests.`);
+
+  const foundArbs: Map<Contest, ContestBetOdds[]> = new Map<Contest, ContestBetOdds[]>();
 
   for(const contest of futureContests) {
-    const contestBets = await datasource.getRepository(ContestBet).findBy({contest: {id: contest.id}});
+    const contestBets = await datasource
+                              .getRepository(ContestBet)
+                              .findBy({contest: {id: contest.id}, isLatest: true});
     const byPairId: Record<string, ContestBet[]> = {};
 
     for(const bet of contestBets) {
@@ -25,8 +29,6 @@ export async function findArbs() {
 
       byPairId[bet.pairId].push(bet);
     }
-
-    log(`Checking arbs - ${contest.title}`);
 
     for(const key of Object.keys(byPairId)) {
       const bets = byPairId[key];
@@ -51,24 +53,48 @@ export async function findArbs() {
           if(odd.sportsbook !== bodd.sportsbook) {
             const val = (1 / odd.odds) + (1 / bodd.odds );
             if(val < 1) {
-              log(`Found arb!`);
-              const profit = ((500 / val) - 500).toFixed(2);
+              const lst = foundArbs.get(contest) ?? [];
               if(odd.odds < bodd.odds) {
-                const cover = (500 * (odd.odds / bodd.odds)).toFixed(2);
-                log(`Profit = ${profit}. Bet $500 on '${odd.contestBet.title}' (${odd.odds}) and $${cover} on '${bodd.contestBet.title}' (${bodd.odds})`);
+                odd.coverBet = bodd;
+                lst.push(odd);
               }else{
-                const cover = (100 * (bodd.odds/ odd.odds)).toFixed(2);
-                log(`Profit = ${profit}. Bet $500 on '${bodd.contestBet.title}' (${bodd.odds}) and $${cover} on '${odd.contestBet.title}' (${odd.odds})`);
+                bodd.coverBet = odd;
+                lst.push(bodd);
               }
+
               odd.arbEv = val;
               bodd.arbEv = val;
               odd.isArb = true;
               bodd.isArb = true;
+
               await datasource.manager.save([odd, bodd]);
+              foundArbs.set(contest, lst);
             }
           }
         }
       }
     }
+  }
+
+  for(const contest of foundArbs.keys()) {
+    const bets = foundArbs.get(contest) ?? [];
+    log(`${contest.title}: ${bets.length} arbs`);
+
+    for(const odd of bets) {
+      const bodd = odd.coverBet;
+      const arbEv = odd.arbEv;
+
+      if(!bodd || !arbEv) {
+        log(`${odd.id}: Missing arbEv or coverBet`);
+        continue;
+      }
+
+      const profit = ((500 / arbEv) - 500).toFixed(2);
+      const cover = (500 * (odd.odds / bodd.odds)).toFixed(2);
+
+      log(`\t ${odd.sportsbook.name}: '${odd.contestBet.title}' Bet $500`);
+      log(`\t ${bodd.sportsbook.name}: '${bodd.contestBet.title}' Bet $${cover}`);
+    }
+
   }
 }

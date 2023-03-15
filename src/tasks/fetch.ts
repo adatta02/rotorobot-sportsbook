@@ -52,9 +52,10 @@ async function contestDTOBetToContestBet(contest: Contest, bet: ContestBetDto): 
     contestBet.key = key;
     contestBet.title = bet.title;
     contestBet.type = bet.type;
-
-    await datasource.manager.save(contestBet);
   }
+
+  contestBet.isLatest = true;
+  await datasource.manager.save(contestBet);
 
   return contestBet;
 }
@@ -93,7 +94,6 @@ async function contestDTOBetOddsToContestBetOdds(sportsbook: Sportsbook,
 
 export async function fetchWynn() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: Wynn.NAME});
-  const datasource = getDatasource();
   const wynn = new Wynn();
 
   let newOdds = 0;
@@ -122,7 +122,6 @@ export async function fetchWynn() {
 
 export async function fetchMGM() {
   const sportsbook = await getDatasource().getRepository(Sportsbook).findOneByOrFail({name: BetMGM.NAME});
-  const datasource = getDatasource();
   const betMgm = new BetMGM();
   let newOdds = 0;
 

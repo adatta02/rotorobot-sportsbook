@@ -2,6 +2,7 @@ import {getDatasource} from "../db";
 import {Sportsbook} from "../entity/sportsbook";
 import {BetMGM} from "../clients/betmgm";
 import {Wynn} from "../clients/wynn";
+import {ContestBet} from "../entity/contestBet";
 
 export async function fixtures() {
   for(const sportsbook of [BetMGM.NAME, Wynn.NAME]) {
@@ -12,4 +13,9 @@ export async function fixtures() {
       await getDatasource().manager.save(book);
     }
   }
+
+  await getDatasource().createQueryBuilder()
+    .update(ContestBet)
+    .set({isLatest: false})
+    .execute();
 }
