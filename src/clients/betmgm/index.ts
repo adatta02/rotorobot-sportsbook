@@ -66,19 +66,15 @@ export class BetMGM {
           for(const gameBet of game.results) {
             let title = gameBet.name.value;
             if(game.name.value === 'Money Line') {
-              if(item.participants[0].name.value.includes(gameBet.name.value)
-                || gameBet.name.value.includes(item.participants[0].name.value)) {
-                title = item.participants[0].name.value;
-              }else{
-                title = item.participants[1].name.value;
-              }
+              title = gameBet.name.value;
             }
 
             bets.push({
               pairId: pair,
               type: game.name.value,
               title: title,
-              odds: gameBet.odds
+              odds: gameBet.odds,
+              source: gameBet
             });
           }
         }
@@ -107,7 +103,8 @@ export class BetMGM {
           contestantTwo: contestantTwo,
           startTime: moment(item.startDate).toDate(),
           isLive: item.liveAlert,
-          bets: bets
+          bets: bets,
+          source: item,
         });
       }
 

@@ -8,4 +8,5 @@ export class ContestDto {
   contestantOne: string;
   contestantTwo: string;
   bets: ContestBetDto[];
+  source?: unknown;
 }

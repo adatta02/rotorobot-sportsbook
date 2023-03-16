@@ -106,6 +106,7 @@ export class Wynn {
               || !game.outcomes
               || game.outcomes.length < 2
               || oddsResult.data[game.outcomes[0].id].status !== 'OPEN'
+                || oddsResult.data[game.outcomes[1].id].status !== 'OPEN'
             ) {
               continue;
             }
@@ -132,7 +133,8 @@ export class Wynn {
                 pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName} ${inverseLineStr}`,
-                odds: oddsResult.data[game.outcomes[0].id].value
+                odds: oddsResult.data[game.outcomes[0].id].value,
+                source: item
               });
 
               bets.push({
@@ -147,7 +149,8 @@ export class Wynn {
                 pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName}`,
-                odds: oddsResult.data[game.outcomes[0].id].value
+                odds: oddsResult.data[game.outcomes[0].id].value,
+                source: item
               });
 
               bets.push({
@@ -161,14 +164,15 @@ export class Wynn {
                 pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `Over ${game.line}`,
-                odds: oddsResult.data[game.outcomes[0].id].value
+                odds: oddsResult.data[game.outcomes[0].id].value,
+                source: item
               });
 
               bets.push({
                 pairId: pair,
                 type: BET_TYPE_MAP[game.name],
                 title: `Under ${game.line}`,
-                odds: oddsResult.data[game.outcomes[1].id].value
+                odds: oddsResult.data[game.outcomes[1].id].value,
               });
             }
           }
@@ -180,7 +184,8 @@ export class Wynn {
             contestantTwo: awayTeamName,
             startTime: moment(itemMatches.match_start).toDate(),
             isLive: itemMatches.inplay,
-            bets: bets
+            bets: bets,
+            source: itemMatches
           });
         }
       }
