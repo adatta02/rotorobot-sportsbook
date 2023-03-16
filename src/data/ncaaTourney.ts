@@ -203,7 +203,7 @@ const teams =[
   },
   {
     "school": "Nevada",
-    "name": "Wolf Pack",
+    "name": "Wolfpack",
     "alts": ["Nevada-Reno"]
   },
   {
