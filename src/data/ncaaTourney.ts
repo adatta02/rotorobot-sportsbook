@@ -1,3 +1,5 @@
+import {log} from "../utils/logger";
+
 const teams =[
   {
     "school": "Alabama",
@@ -42,7 +44,7 @@ const teams =[
   {
     "school": "Coll Charleston",
     "name": "Cougars",
-    "alts": []
+    "alts": ["Charleston"]
   },
   {
     "school": "Creighton",
@@ -87,7 +89,7 @@ const teams =[
   {
     "school": "Houston U",
     "name": "Cougars",
-    "alts": []
+    "alts": ["Houston"]
   },
   {
     "school": "Howard",
@@ -130,9 +132,9 @@ const teams =[
     "alts": []
   },
   {
-    "school": "Kennesaw St",
+    "school": "Kennesaw State",
     "name": "Owls",
-    "alts": []
+    "alts": ["Kennesaw St"]
   },
   {
     "school": "Kent State",
@@ -197,12 +199,12 @@ const teams =[
   {
     "school": "NC State",
     "name": "Wolfpack",
-    "alts": []
+    "alts": ["North Carolina State"]
   },
   {
     "school": "Nevada",
     "name": "Wolf Pack",
-    "alts": []
+    "alts": ["Nevada-Reno"]
   },
   {
     "school": "Northern Ky.",
@@ -247,7 +249,7 @@ const teams =[
   {
     "school": "Saint Mary's",
     "name": "Gaels",
-    "alts": ["Saint Mary's CA"]
+    "alts": ["Saint Mary's CA", "State Mary's"]
   },
   {
     "school": "San Diego State",
@@ -282,7 +284,7 @@ const teams =[
   {
     "school": "Texas A and M Corpus",
     "name": "Islanders",
-    "alts": []
+    "alts": ["Texas A&M Corpus Christi"]
   },
   {
     "school": "Texas",
@@ -307,12 +309,12 @@ const teams =[
   {
     "school": "UC Santa Barbara",
     "name": "Gauchos",
-    "alts": ["Santa Barbara"]
+    "alts": ["Santa Barbara", "UCSB"]
   },
   {
     "school": "UNC Asheville",
     "name": "Bulldogs",
-    "alts": ["NC Asheville"]
+    "alts": ["NC Asheville", "UNC-Asheville"]
   },
   {
     "school": "Utah State",
@@ -349,8 +351,15 @@ const teams =[
 export function getSchoolFromFullName(name: string) {
   for(const team of teams) {
     if(name.includes(team.name)) {
-
+      const nameWithoutTeam = name.replace(team.name, '').trim();
+      if(team.school === nameWithoutTeam || team.alts.includes(nameWithoutTeam)) {
+        return team.school;
+      }
     }
+  }
+
+  if(process.env.DEBUG) {
+    log(`getSchoolFromFullName: Couldn't map ${name}`);
   }
 
   return '';
@@ -361,6 +370,10 @@ export function getSchoolForName(name: string) {
     if(name === team.school || team.alts.includes(name)) {
       return team.school;
     }
+  }
+
+  if(process.env.DEBUG) {
+    log(`getSchoolForName: Couldn't map ${name}`);
   }
 
   return '';

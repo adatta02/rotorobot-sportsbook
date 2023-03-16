@@ -93,14 +93,10 @@ export class BetMGM {
         if(item.sport.name.value === 'Basketball' && item.competition.name.value === 'College') {
           if(getSchoolForName(item.participants[0].name.value)) {
             contestantOne = getSchoolForName(item.participants[0].name.value);
-          }else{
-            log(`BetMGM: Missing NCCA entry for ${item.participants[0].name.value} vs. ${item.participants[1].name.value}`);
           }
 
           if(getSchoolForName(item.participants[1].name.value)) {
             contestantTwo = getSchoolForName(item.participants[1].name.value);
-          }else{
-            log(`BetMGM: Missing NCCA entry for ${item.participants[1].name.value} vs. ${item.participants[0].name.value}`);
           }
         }
 

@@ -5,6 +5,7 @@ import {IWynnCategoryResponse, IWynnSportsOdds, IWynnSportsResponseEntry} from "
 import {ContestDto} from "../../dto/contestDto";
 import {ContestBetDto} from "../../dto/contestBet.dto";
 import {log} from "../../utils/logger";
+import {getSchoolFromFullName} from "../../data/ncaaTourney";
 const uniqid = require('uniqid');
 
 const BET_TYPE_MAP = {
@@ -85,8 +86,18 @@ export class Wynn {
         for(const itemMatches of item.matches) {
 
           // TODO: Normalize these team names
-          const awayTeamName = itemMatches.away_team_name.replace('St.', 'State');
-          const homeTeamName = itemMatches.home_team_name.replace('St.', 'State');
+          let awayTeamName = itemMatches.away_team_name.replace('St.', 'State');
+          let homeTeamName = itemMatches.home_team_name.replace('St.', 'State');
+
+          if(itemMatches.category_name.trim() === 'NCAAB Mens Tournament') {
+            if(getSchoolFromFullName(awayTeamName)) {
+              awayTeamName = getSchoolFromFullName(awayTeamName);
+            }
+
+            if(getSchoolFromFullName(homeTeamName)) {
+              homeTeamName = getSchoolFromFullName(homeTeamName);
+            }
+          }
 
           const bets: ContestBetDto[] = [];
 

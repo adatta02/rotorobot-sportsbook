@@ -5,6 +5,7 @@ import {fetchMGM, fetchWynn} from "./tasks/fetch";
 import {log} from "./utils/logger";
 import {findArbs} from "./tasks/findArbs";
 import {convertDecimalToAmerican} from "./utils";
+import {getSchoolFromFullName} from "./data/ncaaTourney";
 
 const dotenv = require('dotenv');
 dotenv.config();
