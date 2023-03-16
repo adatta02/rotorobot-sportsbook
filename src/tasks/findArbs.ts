@@ -106,8 +106,8 @@ export async function findArbs() {
         continue;
       }
 
-      const oddBetAmount = ((BET_AMOUNT * odd.odds) / arbEv);
-      const cover = ((BET_AMOUNT * bodd.odds) / arbEv).toFixed(2);
+      const oddBetAmount = ((BET_AMOUNT * (1 / odd.odds)) / arbEv);
+      const cover = ((BET_AMOUNT * (1 / bodd.odds)) / arbEv).toFixed(2);
       const profit = ((oddBetAmount / arbEv) - oddBetAmount).toFixed(2);
 
       log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $${oddBetAmount.toFixed(2)}`);
