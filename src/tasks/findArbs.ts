@@ -88,6 +88,8 @@ export async function findArbs() {
 
   if(foundArbs.size === 0) {
     log('findArbs: No arbs!');
+  }else{
+    log(`findArbs: ${foundArbs.size} contests`);
   }
 
   const BET_AMOUNT = 250;
