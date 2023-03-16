@@ -27,8 +27,8 @@ export class BetMGM {
 
   private sportCompetitionList = [
     {label: 'Basketball', sportId: '7', competitionId: '264'},
-    {label: 'NHL', sportId: '12', competitionId: '34'},
-    /*{label: 'PGA', sportId: '13', competitionId: '375'},
+    /*{label: 'NHL', sportId: '12', competitionId: '34'},
+    {label: 'PGA', sportId: '13', competitionId: '375'},
     {label: 'WBC', sportId: '23', competitionId: '7405'},
     {label: 'Darts', sportId: '34', competitionId: ''},
     {label: 'MMA', sportId: '45', competitionId: ''},*/
