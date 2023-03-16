@@ -134,7 +134,7 @@ export class Wynn {
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName} ${inverseLineStr}`,
                 odds: oddsResult.data[game.outcomes[0].id].value,
-                source: item
+                // source: item
               });
 
               bets.push({
@@ -150,7 +150,7 @@ export class Wynn {
                 type: BET_TYPE_MAP[game.name],
                 title: `${awayTeamName}`,
                 odds: oddsResult.data[game.outcomes[0].id].value,
-                source: item
+                // source: item
               });
 
               bets.push({
@@ -165,7 +165,7 @@ export class Wynn {
                 type: BET_TYPE_MAP[game.name],
                 title: `Over ${game.line}`,
                 odds: oddsResult.data[game.outcomes[0].id].value,
-                source: item
+                // source: item
               });
 
               bets.push({
@@ -185,7 +185,7 @@ export class Wynn {
             startTime: moment(itemMatches.match_start).toDate(),
             isLive: itemMatches.inplay,
             bets: bets,
-            source: itemMatches
+            // source: itemMatches
           });
         }
       }

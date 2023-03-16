@@ -74,7 +74,7 @@ export class BetMGM {
               type: game.name.value,
               title: title,
               odds: gameBet.odds,
-              source: gameBet
+              // source: gameBet
             });
           }
         }
@@ -104,7 +104,7 @@ export class BetMGM {
           startTime: moment(item.startDate).toDate(),
           isLive: item.liveAlert,
           bets: bets,
-          source: item,
+          // source: item,
         });
       }
 
