@@ -12,6 +12,7 @@ import {ContestDto} from "../../dto/contestDto";
 import * as moment from 'moment';
 import {ContestBetDto} from "../../dto/contestBet.dto";
 import {log} from "../../utils/logger";
+import {getSchoolForName} from "../../data/ncaaTourney";
 const uniqid = require('uniqid');
 
 const BASE_URL = 'https://sports.ma.betmgm.com';
@@ -86,11 +87,28 @@ export class BetMGM {
           continue;
         }
 
+        let contestantOne = item.participants[0].name.value;
+        let contestantTwo = item.participants[1].name.value;
+
+        if(item.sport.name.value === 'Basketball' && item.competition.name.value === 'College') {
+          if(getSchoolForName(item.participants[0].name.value)) {
+            contestantOne = getSchoolForName(item.participants[0].name.value);
+          }else{
+            log(`BetMGM: Missing NCCA entry for ${item.participants[0].name.value}`);
+          }
+
+          if(getSchoolForName(item.participants[1].name.value)) {
+            contestantTwo = getSchoolForName(item.participants[1].name.value);
+          }else{
+            log(`BetMGM: Missing NCCA entry for ${item.participants[1].name.value}`);
+          }
+        }
+
         contests.push({
           id: `${item.id}`,
           title: item.name.value.replace('(Neutral Venue)', '').trim(),
-          contestantOne: item.participants[0].name.value,
-          contestantTwo: item.participants[1].name.value,
+          contestantOne: contestantOne,
+          contestantTwo: contestantTwo,
           startTime: moment(item.startDate).toDate(),
           isLive: item.liveAlert,
           bets: bets
