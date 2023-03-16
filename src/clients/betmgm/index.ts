@@ -27,8 +27,8 @@ export class BetMGM {
 
   private sportCompetitionList = [
     {label: 'Basketball', sportId: '7', competitionId: '264'},
-    /*{label: 'NHL', sportId: '12', competitionId: '34'},
-    {label: 'PGA', sportId: '13', competitionId: '375'},
+    {label: 'NHL', sportId: '12', competitionId: '34'},
+    /*{label: 'PGA', sportId: '13', competitionId: '375'},
     {label: 'WBC', sportId: '23', competitionId: '7405'},
     {label: 'Darts', sportId: '34', competitionId: ''},
     {label: 'MMA', sportId: '45', competitionId: ''},*/
@@ -86,13 +86,14 @@ export class BetMGM {
         let contestantOne = item.participants[0].name.value;
         let contestantTwo = item.participants[1].name.value;
 
-        if(item.sport.name.value === 'Basketball' && item.competition.name.value === 'College') {
+        if(item.sport.name.value === 'Basketball' && item.competition.name.value.includes('College')) {
+          const prefix = item.competition.name.value.includes('Women') ? 'Women - ' : '';
           if(getSchoolForName(item.participants[0].name.value)) {
-            contestantOne = getSchoolForName(item.participants[0].name.value);
+            contestantOne = prefix + getSchoolForName(item.participants[0].name.value);
           }
 
           if(getSchoolForName(item.participants[1].name.value)) {
-            contestantTwo = getSchoolForName(item.participants[1].name.value);
+            contestantTwo = prefix + getSchoolForName(item.participants[1].name.value);
           }
         }
 

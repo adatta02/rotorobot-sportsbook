@@ -41,8 +41,8 @@ export class Wynn {
 
   private sportCompetitionList = [
     {label: 'Basketball', sportId: '45'},
-    /*{label: 'NHL', sportId: '61'},
-    {label: 'PGA', sportId: '3'},
+    {label: 'NHL', sportId: '61'},
+    /* {label: 'PGA', sportId: '3'},
     {label: 'Darts', sportId: '4'},
     {label: 'MMA', sportId: '67'},*/
   ];
