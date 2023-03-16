@@ -92,7 +92,7 @@ export async function findArbs() {
     log(`findArbs: ${foundArbs.size} contests`);
   }
 
-  const BET_AMOUNT = 250;
+  const BET_AMOUNT = 100;
   for(const contest of foundArbs.keys()) {
     const bets = foundArbs.get(contest) ?? [];
     log(`${contest.title}: ${bets.length} arbs`);
@@ -106,10 +106,11 @@ export async function findArbs() {
         continue;
       }
 
-      const profit = ((BET_AMOUNT / arbEv) - BET_AMOUNT).toFixed(2);
-      const cover = (BET_AMOUNT * (odd.odds / bodd.odds)).toFixed(2);
+      const oddBetAmount = ((BET_AMOUNT * odd.odds) / arbEv);
+      const cover = ((BET_AMOUNT * bodd.odds) / arbEv).toFixed(2);
+      const profit = ((oddBetAmount / arbEv) - oddBetAmount).toFixed(2);
 
-      log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $${BET_AMOUNT}`);
+      log(`\t${odd.sportsbook.name}: '${odd.contestBet.title}' (${convertDecimalToAmerican(odd.odds)}) Bet $${oddBetAmount.toFixed(2)}`);
       log(`\t${bodd.sportsbook.name}: '${bodd.contestBet.title}' (${convertDecimalToAmerican(bodd.odds)}) Bet $${cover}`);
       log(`Profit: ${profit}`);
     }
