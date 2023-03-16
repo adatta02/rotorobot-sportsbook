@@ -1,275 +1,343 @@
-const teams = [
+const teams =[
   {
     "school": "Alabama",
-    "name": "Crimson Tide"
+    "name": "Crimson Tide",
+    "alts": []
   },
   {
     "school": "Arizona",
-    "name": "Wildcats"
+    "name": "Wildcats",
+    "alts": []
   },
   {
     "school": "Arizona State",
-    "name": "Sun Devils"
+    "name": "Sun Devils",
+    "alts": []
   },
   {
     "school": "Arkansas",
-    "name": "Razorbacks"
+    "name": "Razorbacks",
+    "alts": []
   },
   {
     "school": "Auburn",
-    "name": "Tigers"
+    "name": "Tigers",
+    "alts": []
   },
   {
     "school": "Baylor",
-    "name": "Bears"
+    "name": "Bears",
+    "alts": []
   },
   {
     "school": "Boise State",
-    "name": "Broncos"
+    "name": "Broncos",
+    "alts": []
   },
   {
     "school": "Colgate",
-    "name": "Raiders"
+    "name": "Raiders",
+    "alts": []
   },
   {
     "school": "Coll Charleston",
-    "name": "Cougars"
+    "name": "Cougars",
+    "alts": []
   },
   {
     "school": "Creighton",
-    "name": "Bluejays"
+    "name": "Bluejays",
+    "alts": []
   },
   {
     "school": "Drake",
-    "name": "Bulldogs"
+    "name": "Bulldogs",
+    "alts": []
   },
   {
     "school": "Duke",
-    "name": "Blue Devils"
+    "name": "Blue Devils",
+    "alts": []
   },
   {
     "school": "Fairleigh Dickinson",
-    "name": "Knights"
+    "name": "Knights",
+    "alts": []
   },
   {
     "school": "Florida Atlantic",
-    "name": "Owls"
+    "name": "Owls",
+    "alts": []
   },
   {
     "school": "Furman",
-    "name": "Paladins"
+    "name": "Paladins",
+    "alts": []
   },
   {
     "school": "Gonzaga",
-    "name": "Bulldogs"
+    "name": "Bulldogs",
+    "alts": []
   },
   {
     "school": "Grand Canyon",
-    "name": "Antelopes"
+    "name": "Antelopes",
+    "alts": []
   },
   {
     "school": "Houston U",
-    "name": "Cougars"
+    "name": "Cougars",
+    "alts": []
   },
   {
     "school": "Howard",
-    "name": "Bison"
+    "name": "Bison",
+    "alts": []
   },
   {
     "school": "Illinois",
-    "name": "Fighting Illini"
+    "name": "Fighting Illini",
+    "alts": []
   },
   {
     "school": "Indiana",
-    "name": "Hoosiers"
+    "name": "Hoosiers",
+    "alts": ["Indiana U."]
   },
   {
     "school": "Iona",
-    "name": "Gaels"
+    "name": "Gaels",
+    "alts": []
   },
   {
     "school": "Iowa",
-    "name": "Hawkeyes"
+    "name": "Hawkeyes",
+    "alts": []
   },
   {
     "school": "Iowa State",
-    "name": "Cyclones"
+    "name": "Cyclones",
+    "alts": []
   },
   {
     "school": "Kansas",
-    "name": "Jayhawks"
+    "name": "Jayhawks",
+    "alts": []
   },
   {
     "school": "Kansas State",
-    "name": "Wildcats"
+    "name": "Wildcats",
+    "alts": []
   },
   {
     "school": "Kennesaw St",
-    "name": "Owls"
+    "name": "Owls",
+    "alts": []
   },
   {
     "school": "Kent State",
-    "name": "Golden Flashes"
+    "name": "Golden Flashes",
+    "alts": []
   },
   {
     "school": "Northern Kentucky",
-    "name": "Norse"
+    "name": "Norse",
+    "alts": []
   },
   {
     "school": "Louisiana",
-    "name": "Ragin' Cajuns"
+    "name": "Ragin' Cajuns",
+    "alts": []
   },
   {
     "school": "Marquette",
-    "name": "Golden Eagles"
+    "name": "Golden Eagles",
+    "alts": []
   },
   {
     "school": "Maryland",
-    "name": "Terrapins"
+    "name": "Terrapins",
+    "alts": []
   },
   {
     "school": "Memphis",
-    "name": "Tigers"
+    "name": "Tigers",
+    "alts": []
   },
   {
     "school": "Miami",
-    "name": "Hurricanes"
+    "name": "Hurricanes",
+    "alts": ["Miami (FL)"]
   },
   {
     "school": "Michigan State",
-    "name": "Spartans"
+    "name": "Spartans",
+    "alts": []
   },
   {
     "school": "Mississippi St.",
-    "name": "Bulldogs"
+    "name": "Bulldogs",
+    "alts": []
   },
   {
     "school": "Missouri",
-    "name": "Tigers"
+    "name": "Tigers",
+    "alts": []
   },
   {
     "school": "Montana State",
-    "name": "Bobcats"
+    "name": "Bobcats",
+    "alts": []
   },
   {
     "school": "NC State",
-    "name": "Wolfpack"
+    "name": "Wolfpack",
+    "alts": []
   },
   {
     "school": "Nevada",
-    "name": "Wolf Pack"
+    "name": "Wolf Pack",
+    "alts": []
   },
   {
     "school": "Northern Ky.",
-    "name": "Norse"
+    "name": "Norse",
+    "alts": []
   },
   {
     "school": "Northwestern",
-    "name": "Wildcats"
+    "name": "Wildcats",
+    "alts": []
   },
   {
     "school": "Oral Roberts",
-    "name": "Golden Eagles"
+    "name": "Golden Eagles",
+    "alts": []
   },
   {
     "school": "Penn State",
-    "name": "Nittany Lions"
+    "name": "Nittany Lions",
+    "alts": []
   },
   {
     "school": "Pittsburgh",
-    "name": "Panthers"
+    "name": "Panthers",
+    "alts": []
   },
   {
     "school": "Princeton",
-    "name": "Tigers"
+    "name": "Tigers",
+    "alts": []
   },
   {
     "school": "Providence",
-    "name": "Friars"
+    "name": "Friars",
+    "alts": []
   },
   {
     "school": "Purdue",
-    "name": "Boilermakers"
+    "name": "Boilermakers",
+    "alts": []
   },
   {
     "school": "Saint Mary's",
-    "name": "Gaels"
+    "name": "Gaels",
+    "alts": ["Saint Mary's CA"]
   },
   {
     "school": "San Diego State",
-    "name": "Aztecs"
+    "name": "Aztecs",
+    "alts": []
   },
   {
     "school": "Southeast Missouri State",
-    "name": "Redhawks"
+    "name": "Redhawks",
+    "alts": []
   },
   {
     "school": "USC",
-    "name": "Trojans"
+    "name": "Trojans",
+    "alts": []
   },
   {
     "school": "TCU",
-    "name": "Horned Frogs"
+    "name": "Horned Frogs",
+    "alts": []
   },
   {
     "school": "Tennessee",
-    "name": "Volunteers"
+    "name": "Volunteers",
+    "alts": []
   },
   {
     "school": "Texas A&M",
-    "name": "Aggies"
+    "name": "Aggies",
+    "alts": []
   },
   {
     "school": "Texas A and M Corpus",
-    "name": "Islanders"
+    "name": "Islanders",
+    "alts": []
   },
   {
     "school": "Texas",
-    "name": "Longhorns"
+    "name": "Longhorns",
+    "alts": []
   },
   {
     "school": "Texas Southern",
-    "name": "Tigers"
+    "name": "Tigers",
+    "alts": []
   },
   {
     "school": "UCLA",
-    "name": "Bruins"
+    "name": "Bruins",
+    "alts": []
   },
   {
     "school": "UConn",
-    "name": "Huskies"
+    "name": "Huskies",
+    "alts": ["Connecticut"]
   },
   {
-    "school": "Santa Barbara",
-    "name": "Gauchos"
+    "school": "UC Santa Barbara",
+    "name": "Gauchos",
+    "alts": ["Santa Barbara"]
   },
   {
-    "school": "NC Asheville",
-    "name": "Bulldogs"
+    "school": "UNC Asheville",
+    "name": "Bulldogs",
+    "alts": ["NC Asheville"]
   },
   {
     "school": "Utah State",
-    "name": "Aggies"
+    "name": "Aggies",
+    "alts": []
   },
   {
     "school": "VCU",
-    "name": "Rams"
+    "name": "Rams",
+    "alts": []
   },
   {
     "school": "Vermont",
-    "name": "Catamounts"
+    "name": "Catamounts",
+    "alts": []
   },
   {
     "school": "Virginia",
-    "name": "Cavaliers"
+    "name": "Cavaliers",
+    "alts": ["VA Commonwealth"]
   },
   {
     "school": "West Virginia",
-    "name": "Mountaineers"
+    "name": "Mountaineers",
+    "alts": []
   },
   {
     "school": "Xavier",
-    "name": "Musketeers"
+    "name": "Musketeers",
+    "alts": []
   }
 ];
 
@@ -285,7 +353,7 @@ export function getSchoolFromFullName(name: string) {
 
 export function getSchoolForName(name: string) {
   for(const team of teams) {
-    if(name === team.school) {
+    if(name === team.school || team.alts.includes(name)) {
       return team.school;
     }
   }
