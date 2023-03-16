@@ -145,6 +145,11 @@ const teams =[
     "alts": []
   },
   {
+    "school": "Kentucky",
+    "name": "Wildcats",
+    "alts": []
+  },
+  {
     "school": "Louisiana",
     "name": "Ragin' Cajuns",
     "alts": []
@@ -344,7 +349,7 @@ const teams =[
 export function getSchoolFromFullName(name: string) {
   for(const team of teams) {
     if(name.includes(team.name)) {
-      return team.school;
+
     }
   }
 
